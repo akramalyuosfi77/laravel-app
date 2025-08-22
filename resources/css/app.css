@@ -1,0 +1,138 @@
+/* 📂 ملف: resources/css/app.css (نسخة معدلة ومتوافقة مع Livewire Flux) */
+
+/*
+|--------------------------------------------------------------------------
+| 1. استيراد أساسيات Tailwind و Flux
+|--------------------------------------------------------------------------
+|
+| هذه هي الطريقة التي يوصي بها Flux.
+| `@import 'tailwindcss';` يقوم بجلب كل شيء من Tailwind.
+| `@import '.../flux.css';` يقوم بجلب الستايلات الأساسية لمكونات Flux.
+|
+*/
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+/*
+|--------------------------------------------------------------------------
+| 2. تحديد مصادر المحتوى لـ Tailwind (مهم جداً)
+|--------------------------------------------------------------------------
+|
+| هذه الأسطر تخبر Tailwind أين يبحث عن الكلاسات التي تستخدمها،
+| حتى لا يقوم بحذفها عند بناء ملف CSS النهائي.
+|
+*/
+@source '../views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+/*
+|--------------------------------------------------------------------------
+| 3. تعريف متغيرات Dark Mode و Theme
+|--------------------------------------------------------------------------
+|
+| `@custom-variant dark` هي طريقة Flux لتعريف نمط الوضع المظلم.
+| `@theme` يستخدم لتعريف المتغيرات الأساسية للمشروع مثل الألوان والخطوط.
+|
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    /* ✅ الخط الأساسي للمشروع هو Changa */
+    --font-sans: 'Changa', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* تعريف ألوان Zinc التي يستخدمها القالب الخاص بك */
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    /* تعريف ألوان Accent (اللون المميز) */
+    /* أنت تستخدم ألوان Neutral، وهذا ممتاز للتوافق مع الـ Dark Mode */
+    --color-accent: var(--color-neutral-800);
+    --color-accent-content: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-white);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 4. تعريف الطبقة الأساسية (Base Layer) والخطوط المحلية
+|--------------------------------------------------------------------------
+|
+| هنا نضع تعريفات الخطوط المحلية والأنماط الأساسية لجسم الصفحة.
+| هذا هو التحسين الأكبر للأداء.
+|
+*/
+@layer base {
+    /*
+    | 🔥 التحسين الأهم: تعريف خط Changa محلياً لسرعة فائقة
+    | ❗ تذكير: تأكد من تحميل هذه الخطوط ووضعها في مجلد `public/fonts/`
+    */
+    @font-face {
+        font-family: 'Changa';
+        font-style: normal;
+        font-weight: 400; /* Regular */
+        font-display: swap;
+        src: url('/fonts/Changa-Regular.woff2') format('woff2');
+    }
+    @font-face {
+        font-family: 'Changa';
+        font-style: normal;
+        font-weight: 700; /* Bold */
+        font-display: swap;
+        src: url('/fonts/Changa-Bold.woff2') format('woff2');
+    }
+    @font-face {
+        font-family: 'Changa';
+        font-style: normal;
+        font-weight: 800; /* ExtraBold, وليس 900. خط Changa لا يأتي بوزن 900 */
+        font-display: swap;
+        src: url('/fonts/Changa-ExtraBold.woff2') format('woff2');
+    }
+
+    /*
+    | تطبيق الأنماط الأساسية على مستوى الـ HTML و Body
+    */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        /* تطبيق الخط الافتراضي على كامل الموقع من متغيرات الـ Theme */
+        font-family: var(--font-sans);
+        /* حجم خط ومسافة أسطر مريحة للقراءة باللغة العربية */
+        font-size: 16px; /* 16px هو حجم قياسي ومناسب أكثر من 18px لمعظم الواجهات */
+        line-height: 1.75;
+        text-align: right;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* استخدام ألوان Zinc من متغيرات الـ Theme لضمان التوافق مع Dark Mode */
+        @apply text-zinc-800 dark:text-zinc-200;
+    }
+
+    /* تعريف أنماط العناوين الرئيسية */
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 700; /* Bold */
+        letter-spacing: -0.5px;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| 5. تعريف مكونات مخصصة
+|--------------------------------------------------------------------------
+*/
+@layer components {
+    .menu-hover:hover {
+        transform: translateX(-0.25rem);
+        transition: transform 200ms ease-in-out;
+    }
+}
