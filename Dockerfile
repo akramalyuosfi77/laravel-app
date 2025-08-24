@@ -1,38 +1,46 @@
 FROM php:8.2-apache
 
-# تفعيل rewrite module في Apache
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# تثبيت الامتدادات المطلوبة للـ Laravel
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git \
     unzip \
+    git \
     libzip-dev \
     libonig-dev \
     libxml2-dev \
     sqlite3 \
     libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite zip mbstring exif pcntl bcmath
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_sqlite zip mbstring exif pcntl bcmath
 
-# تنزيل Composer
+# Copy Composer from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# نسخ المشروع
+# Set working directory
 WORKDIR /var/www/html
+
+# Copy app files
 COPY . .
 
-# تثبيت المكتبات
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# نسخ ملف env إذا موجود
-COPY .env /var/www/html/.env
+# Cache Laravel config, routes, and views
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# صلاحيات للـ storage والـ bootstrap
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Fix permissions for storage and bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port
+# Expose port 80
 EXPOSE 80
 
-# تشغيل Apache
+# Start Apache
 CMD ["apache2-foreground"]
