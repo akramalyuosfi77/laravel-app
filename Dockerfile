@@ -22,6 +22,8 @@ WORKDIR /var/www/html
 
 # انسخ ملفات المشروع
 COPY . .
+# ثبت الامتدادات المطلوبة
+RUN docker-php-ext-install gd pdo_mysql bcmath exif zip
 
 # ثبّت الحزم
 RUN composer install --no-dev --optimize-autoloader
