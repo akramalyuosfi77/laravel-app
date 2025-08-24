@@ -3,7 +3,7 @@ FROM php:8.2-apache
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Install system dependencies and PHP extensions
+# Install system dependencies and PHP extensions (including GD)
 RUN apt-get update && apt-get install -y \
     unzip \
     git \
@@ -27,8 +27,11 @@ WORKDIR /var/www/html
 # Copy app files
 COPY . .
 
+# 👇 مهم: تأكد GD مثبّت قبل هذي الخطوة
+RUN php -m | grep gd || true
+
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --ignore-platform-req=ext-gd --no-dev --optimize-autoloader
 
 # Cache Laravel config, routes, and views
 RUN php artisan config:cache && \
