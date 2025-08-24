@@ -32,20 +32,20 @@ COPY . .
 # 7. **أصلح الملكية والصلاحيات (هذه هي الخطوة الأهم)**
 # أولاً: غيّر ملكية كل الملفات إلى مستخدم Apache
 RUN chown -R www-data:www-data /var/www/html
-# ثانيًا: أعطِ صلاحيات الكتابة اللازمة للمجلدات الحساسة
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 8. ثبّت حزم Laravel كمستخدم Apache (أكثر أمانًا)
-USER www-data
+# 8. **أنشئ ملف السجل وأعطه الصلاحيات الصحيحة (هذا هو الإصلاح الجديد)**
+RUN mkdir -p storage/logs && \
+    touch storage/logs/laravel.log && \
+    chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache
+
+# 9. ثبّت حزم Laravel
 RUN composer install --no-interaction --no-plugins --no-scripts --no-dev --optimize-autoloader
 
-# 9. شغّل أوامر Laravel
+# 10. شغّل أوامر Laravel
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
-
-# 10. ارجع إلى المستخدم الجذر لتشغيل الخادم
-USER root
 
 # 11. شغّل Apache
 CMD ["apache2-foreground"]
