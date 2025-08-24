@@ -29,21 +29,23 @@ WORKDIR /var/www/html
 # 6. انسخ ملفات المشروع
 COPY . .
 
-# 7. أعطِ صلاحيات الملكية قبل تشغيل Composer (مهم)
-RUN chown -R www-data:www-data .
+# 7. **أصلح الملكية والصلاحيات (هذه هي الخطوة الأهم)**
+# أولاً: غيّر ملكية كل الملفات إلى مستخدم Apache
+RUN chown -R www-data:www-data /var/www/html
+# ثانيًا: أعطِ صلاحيات الكتابة اللازمة للمجلدات الحساسة
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 8. ثبّت حزم Laravel
+# 8. ثبّت حزم Laravel كمستخدم Apache (أكثر أمانًا)
+USER www-data
 RUN composer install --no-interaction --no-plugins --no-scripts --no-dev --optimize-autoloader
 
-# 9. أنشئ ملف .env فارغًا (إذا لم يكن موجودًا) وشغّل أوامر Laravel
-RUN touch .env && \
-    php artisan key:generate && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# 9. شغّل أوامر Laravel
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
-# 10. افتح المنفذ 80
-EXPOSE 80
+# 10. ارجع إلى المستخدم الجذر لتشغيل الخادم
+USER root
 
 # 11. شغّل Apache
 CMD ["apache2-foreground"]
