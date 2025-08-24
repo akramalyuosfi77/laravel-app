@@ -1,7 +1,7 @@
 # استخدم صورة PHP مع Apache
 FROM php:8.2-apache
 
-# ثبّت المكتبات اللي يحتاجها Laravel و Excel
+# ثبّت المكتبات المطلوبة للـ GD و Laravel
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -14,17 +14,17 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql mbstring exif pcntl bcmath
 
-# نسخ composer
+# نسخ Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# حدد مسار العمل
+# حدد مجلد العمل
 WORKDIR /var/www/html
 
 # انسخ ملفات المشروع
 COPY . .
 
-# ثبّت الحزم مع تجاوز فحص gd (احتياطياً)
-RUN composer install --ignore-platform-req=ext-gd --no-dev --optimize-autoloader
+# ثبّت الحزم
+RUN composer install --no-dev --optimize-autoloader
 
 # Laravel cache
 RUN php artisan config:cache && \
