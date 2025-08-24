@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\admin;
+namespace App\Livewire\Admin;
 
 use App\Models\Batch;
 use App\Models\Specialization;

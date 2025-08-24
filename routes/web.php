@@ -4,46 +4,46 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 // استيراد مكونات لوحة تحكم المدير (Admin)
-use App\Livewire\admin\AdminDashboard;
-use App\Livewire\admin\AnnouncementsPage;
-use App\Livewire\admin\AssignmentsPage as AdminAssignmentsPage;
-use App\Livewire\admin\BatchesPage;
-use App\Livewire\admin\ContactMessagesPage;
-use App\Livewire\admin\CoursesPage;
-use App\Livewire\admin\DepartmentsPage;
-use App\Livewire\admin\DiscussionsManagementPage;
-use App\Livewire\admin\DoctorsPage;
-use App\Livewire\admin\LecturesPage as AdminLecturesPage;
-use App\Livewire\admin\LocationsPage;
-use App\Livewire\admin\ProjectsPage as AdminProjectsPage;
-use App\Livewire\admin\Reports\AttendanceReportPage;
-use App\Livewire\admin\Reports\ReportCenter;
-use App\Livewire\admin\SchedulesPage as AdminSchedulesPage;
-use App\Livewire\admin\SpecializationsPage;
-use App\Livewire\admin\StudentsPage;
-use App\Livewire\admin\SubmissionsPage as AdminSubmissionsPage;
-use App\Livewire\admin\UsersManagement;
+use App\Livewire\Admin\AdminDashboard;
+use App\Livewire\Admin\AnnouncementsPage;
+use App\Livewire\Admin\AssignmentsPage as AdminAssignmentsPage;
+use App\Livewire\Admin\BatchesPage;
+use App\Livewire\Admin\ContactMessagesPage;
+use App\Livewire\Admin\CoursesPage;
+use App\Livewire\Admin\DepartmentsPage;
+use App\Livewire\Admin\DiscussionsManagementPage;
+use App\Livewire\Admin\DoctorsPage;
+use App\Livewire\Admin\LecturesPage as AdminLecturesPage;
+use App\Livewire\Admin\LocationsPage;
+use App\Livewire\Admin\ProjectsPage as AdminProjectsPage;
+use App\Livewire\Admin\Reports\AttendanceReportPage;
+use App\Livewire\Admin\Reports\ReportCenter;
+use App\Livewire\Admin\SchedulesPage as AdminSchedulesPage;
+use App\Livewire\Admin\SpecializationsPage;
+use App\Livewire\Admin\StudentsPage;
+use App\Livewire\Admin\SubmissionsPage as AdminSubmissionsPage;
+use App\Livewire\Admin\UsersManagement;
 
 // استيراد مكونات لوحة تحكم الدكتور (Doctor)
-use App\Livewire\doctor\DoctorDashboard;
-use App\Livewire\doctor\DoctorAssignmentsPage;
-use App\Livewire\doctor\DoctorProjectsPage;
-use App\Livewire\doctor\LecturesPage as DoctorLecturesPage;
-use App\Livewire\doctor\MyCoursesPage as DoctorMyCoursesPage;
-use App\Livewire\doctor\CourseDiscussionsPage as DoctorCourseDiscussionsPage;
-use App\Livewire\doctor\MySchedulePage as DoctorMySchedulePage;
-use App\Livewire\doctor\Reports\CourseReportPage;
+use App\Livewire\Doctor\DoctorDashboard;
+use App\Livewire\Doctor\DoctorAssignmentsPage;
+use App\Livewire\Doctor\DoctorProjectsPage;
+use App\Livewire\Doctor\LecturesPage as DoctorLecturesPage;
+use App\Livewire\Doctor\MyCoursesPage as DoctorMyCoursesPage;
+use App\Livewire\Doctor\CourseDiscussionsPage as DoctorCourseDiscussionsPage;
+use App\Livewire\Doctor\MySchedulePage as DoctorMySchedulePage;
+use App\Livewire\Doctor\Reports\CourseReportPage;
 
 // استيراد مكونات لوحة تحكم الطالب (Student)
-use App\Livewire\student\StudentDashboard;
-use App\Livewire\student\StudentAssignmentsPage;
-use App\Livewire\student\StudentProjectsPage;
-use App\Livewire\student\LecturesPage as StudentLecturesPage;
-use App\Livewire\student\CourseDiscussionsPage as StudentCourseDiscussionsPage;
-use App\Livewire\student\MyCoursesPage;
-use App\Livewire\student\MySchedulePage as StudentMySchedulePage;
-use App\Livewire\student\MyAttendancePage;
-use App\Livewire\student\ProfilePage;
+use App\Livewire\Student\StudentDashboard;
+use App\Livewire\Student\StudentAssignmentsPage;
+use App\Livewire\Student\StudentProjectsPage;
+use App\Livewire\Student\LecturesPage as StudentLecturesPage;
+use App\Livewire\Student\CourseDiscussionsPage as StudentCourseDiscussionsPage;
+use App\Livewire\Student\MyCoursesPage;
+use App\Livewire\Student\MySchedulePage as StudentMySchedulePage;
+use App\Livewire\Student\MyAttendancePage;
+use App\Livewire\Student\ProfilePage;
 
 
 /*

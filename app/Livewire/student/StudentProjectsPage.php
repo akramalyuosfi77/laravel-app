@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\student;
+namespace App\Livewire\Student;
 
 use App\Models\User;
 use App\Models\Student;

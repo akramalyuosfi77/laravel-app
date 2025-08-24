@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\admin;
+namespace App\Livewire\Admin;
 
 // استيراد الكلاسات والنماذج الضرورية
 use App\Models\Assignment;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\doctor;
+namespace App\Livewire\Doctor;
 
 use App\Models\Project;
 use App\Models\ProjectComment;
