@@ -1,51 +1,39 @@
-# 1. استخدم أحدث إصدار من PHP 8.2 مع خادم Apache
+# 1) PHP 8.2 + Apache
 FROM php:8.2-apache
 
-# 2. حدد المجلد العام الصحيح لـ Laravel وأخبر Apache بذلك
+# 2) اجعل public هو الجذر وافعل rewrite
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN a2enmod rewrite
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+    && a2enmod rewrite \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# 3. ثبّت الحزم والمكتبات الأساسية وامتدادات PHP المطلوبة
+# 3) حزم النظام + امتدادات PHP (مع SQLite)
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    zip \
-    libzip-dev \
-    libonig-dev \
-    libxml2-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo_mysql bcmath exif zip
+    git unzip zip \
+    sqlite3 libsqlite3-dev \
+    libzip-dev libonig-dev libxml2-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+ && docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_sqlite bcmath exif zip
 
-# 4. انسخ Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# 4) Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# 5. حدد مجلد العمل
+# 5) مجلد العمل + نسخ المشروع
 WORKDIR /var/www/html
-
-# 6. انسخ ملفات المشروع
 COPY . .
 
-# 7. **أصلح الملكية والصلاحيات (هذه هي الخطوة الأهم)**
-# أولاً: غيّر ملكية كل الملفات إلى مستخدم Apache
-RUN chown -R www-data:www-data /var/www/html
+# 6) تأكد من وجود ملف قاعدة البيانات وصلاحيات Laravel
+RUN mkdir -p database storage/logs bootstrap/cache \
+ && touch database/database.sqlite storage/logs/laravel.log \
+ && chown -R www-data:www-data storage bootstrap/cache database \
+ && chmod -R 775 storage bootstrap/cache database
 
-# 8. **أنشئ ملف السجل وأعطه الصلاحيات الصحيحة (هذا هو الإصلاح الجديد)**
-RUN mkdir -p storage/logs && \
-    touch storage/logs/laravel.log && \
-    chmod -R 775 storage bootstrap/cache && \
-    chown -R www-data:www-data storage bootstrap/cache
+# 7) تثبيت الاعتمادات
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
-# 9. ثبّت حزم Laravel
-RUN composer install --no-interaction --no-plugins --no-scripts --no-dev --optimize-autoloader
+# ملاحظة مهمة: لا تعمل config:cache في مرحلة الـ build
+# حتى تأخذ متغيّرات بيئة Render مفعولها وقت التشغيل
 
-# 10. شغّل أوامر Laravel
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
-
-# 11. شغّل Apache
+EXPOSE 80
 CMD ["apache2-foreground"]
