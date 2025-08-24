@@ -1,7 +1,7 @@
-# استخدم صورة PHP مع Apache
+# استخدم PHP مع Apache
 FROM php:8.2-apache
 
-# ثبّت المكتبات المطلوبة للـ GD و Laravel
+# ثبّت المكتبات الضرورية
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -10,22 +10,21 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring exif pcntl bcmath
+    && docker-php-ext-install gd pdo_mysql bcmath exif zip
 
-# نسخ Composer
+# انسخ Composer من صورة رسمية
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# حدد مجلد العمل
+# عيّن مسار العمل داخل الحاوية
 WORKDIR /var/www/html
 
-# انسخ ملفات المشروع
+# انسخ الملفات
 COPY . .
-# ثبت الامتدادات المطلوبة
-RUN docker-php-ext-install gd pdo_mysql bcmath exif zip
 
-# ثبّت الحزم
+# ثبّت الحزم بالـ Composer
 RUN composer install --no-dev --optimize-autoloader
 
 # Laravel cache
@@ -33,7 +32,10 @@ RUN php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
-# افتح بورت 80
+# فعّل mod_rewrite في Apache
+RUN a2enmod rewrite
+
+# افتح البورت 80
 EXPOSE 80
 
 # شغل Apache
