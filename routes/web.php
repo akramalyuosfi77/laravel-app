@@ -57,7 +57,6 @@ Route::middleware(['auth', 'role:admin','verified','throttle:20,1'])->prefix('ad
     Route::get('/discussions-management', \App\Livewire\Admin\DiscussionsManagementPage::class)->name('discussions.management');
     Route::get('schedules', \App\Livewire\Admin\SchedulesPage::class)->name('schedules');
     Route::get('locations', \App\Livewire\Admin\LocationsPage::class)->name('locations');
-    // داخل Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(...)
     Route::get('/reports', \App\Livewire\Admin\Reports\ReportCenter::class)->name('reports.center');
     Route::get('reports/attendance', AttendanceReportPage::class)->name('reports.attendance');
 
@@ -91,6 +90,7 @@ Route::middleware(['auth', 'role:student','verified','throttle:20,1'])->prefix('
     Route::get('/my-courses', MyCoursesPage::class)->name('my-courses');
     Route::get('my-schedule', \App\Livewire\Student\MySchedulePage::class)->name('my-schedule');
     Route::get('/my-attendance', MyAttendancePage::class)->name('attendance');
+    Route::get('/profile', App\Livewire\student\ProfilePage::class)->name('profile');
 
 
     // باقي مسارات الطالب

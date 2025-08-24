@@ -30,13 +30,11 @@
                 {{-- اسم الطالب وصورته --}}
                 {{-- اسم الطالب وصورته (مع التحقق من وجود المستخدم) --}}
                 <div class="flex items-center">
-                    {{-- ✅ التحقق من وجود علاقة user قبل استخدامها --}}
-                    @if ($student->user)
+                    @if ($student->profile_image)
                         <img class="h-10 w-10 rounded-full object-cover me-3"
-                            src="{{ $student->user->profile_image ? asset('storage/' . $student->user->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($student->name ) . '&color=7F9CF5&background=EBF4FF' }}"
+                            src="{{ Storage::url($student->profile_image) }}"
                             alt="{{ $student->name }}">
                     @else
-                        {{-- ✅ صورة افتراضية في حال عدم وجود مستخدم مرتبط --}}
                         <img class="h-10 w-10 rounded-full object-cover me-3"
                             src="{{ 'https://ui-avatars.com/api/?name=' . urlencode($student->name ) . '&color=7F9CF5&background=EBF4FF' }}"
                             alt="{{ $student->name }}">

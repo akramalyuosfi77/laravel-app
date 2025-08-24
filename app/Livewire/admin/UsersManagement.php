@@ -85,7 +85,7 @@ class UsersManagement extends Component
                 'name' => $this->name,
                 'email' => $this->email,
                 'role' => $this->role,
-                'is_active' => $this->is_active,
+                'is_active' => $this->is_active == '1' ? true : false,
             ];
 
             if ($this->password) {
@@ -231,6 +231,20 @@ class UsersManagement extends Component
         $this->resetPage();
     }
 
+    public function getFormSpecializationsProperty()
+    {
+        // يمكنك تخصيص الفلترة حسب الحاجة، هنا جميع التخصصات
+        return Specialization::all();
+    }
+
+public function getFormBatchesProperty()
+{
+    if ($this->specialization_id) {
+        return Batch::where('specialization_id', $this->specialization_id)->get();
+    }
+    return Batch::all();
+}
+
     public function updatingFilterRole()
     {
         $this->resetPage();
@@ -239,6 +253,11 @@ class UsersManagement extends Component
     public function updatingFilterIsActive()
     {
         $this->resetPage();
+    }
+
+    public function updatedSpecializationId($value)
+    {
+        $this->batch_id = null;
     }
 
     public function render()

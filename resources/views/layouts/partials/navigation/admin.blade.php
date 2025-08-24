@@ -3,8 +3,6 @@
     <h3 class="px-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{{ __('لوحة المسؤول') }}</h3>
 
 
-
-
     <x-nav-link :href="route('admin.departments')" :active="request()->routeIs('admin.departments') || request()->routeIs('admin.departments.*')">
         <x-slot:icon><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></x-slot:icon>
         {{ __('الأقسام') }}
@@ -75,8 +73,23 @@
         {{ __('القاعات والمعامل') }}
     </x-nav-link>
 
+    <x-nav-link :href="route('admin.reports.center')" :active="request()->routeIs('admin.reports.center')">
+        <x-slot:icon><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a4 4 0 004 4h10a4 4 0 004-4V7" /><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4M8 3v4" /></svg></x-slot:icon>
+        {{ __('التقارير') }}
+    </x-nav-link>
+
+    <x-nav-link :href="route('admin.reports.attendance')" :active="request()->routeIs('admin.reports.attendance')">
+        <x-slot:icon><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4-4 4 4M12 3v10" /></svg></x-slot:icon>
+        {{ __('الحضور والغياب') }}
+    </x-nav-link>
+
     <x-nav-link :href="route('admin.contact-messages')" :active="request()->routeIs('admin.contact-messages') || request()->routeIs('admin.contact-messages.*')">
         <x-slot:icon><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg></x-slot:icon>
         {{ __('صندوق الرسائل') }}
+    </x-nav-link>
+
+    <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users') || request()->routeIs('admin.users.*')">
+        <x-slot:icon><svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2h5"/></svg></x-slot:icon>
+        {{ __('إدارة المستخدمين') }}
     </x-nav-link>
 </div>

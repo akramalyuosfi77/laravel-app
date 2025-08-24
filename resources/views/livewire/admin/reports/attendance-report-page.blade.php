@@ -96,7 +96,7 @@
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors" wire:key="record-{{ $record->id }}">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $record->student->user?->profile_image ? asset('storage/' . $record->student->user->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($record->student->name ) . '&color=7F9CF5&background=EBF4FF' }}" alt="{{ $record->student->name }}">
+                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $record->student->profile_image ? Storage::url($record->student->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($record->student->name ) . '&color=7F9CF5&background=EBF4FF' }}" alt="{{ $record->student->name }}">
                                         <div class="mr-4">
                                             <div class="font-medium text-zinc-900 dark:text-white">{{ $record->student->name ?? 'غير متوفر' }}</div>
                                             <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $record->student->student_id_number ?? '' }}</div>
