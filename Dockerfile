@@ -1,49 +1,38 @@
+# استخدم صورة PHP مع Apache
 FROM php:8.2-apache
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Install system dependencies and PHP extensions (including GD)
+# ثبّت المكتبات اللي يحتاجها Laravel و Excel
 RUN apt-get update && apt-get install -y \
-    unzip \
     git \
-    libzip-dev \
-    libonig-dev \
-    libxml2-dev \
-    sqlite3 \
-    libsqlite3-dev \
+    unzip \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_sqlite zip mbstring exif pcntl bcmath
+    && docker-php-ext-install gd pdo pdo_mysql mbstring exif pcntl bcmath
 
-# Copy Composer from official image
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# نسخ composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# حدد مسار العمل
 WORKDIR /var/www/html
 
-# Copy app files
+# انسخ ملفات المشروع
 COPY . .
 
-# 👇 مهم: تأكد GD مثبّت قبل هذي الخطوة
-RUN php -m | grep gd || true
-
-# Install PHP dependencies
+# ثبّت الحزم مع تجاوز فحص gd (احتياطياً)
 RUN composer install --ignore-platform-req=ext-gd --no-dev --optimize-autoloader
 
-# Cache Laravel config, routes, and views
+# Laravel cache
 RUN php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
-# Fix permissions for storage and bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Expose port 80
+# افتح بورت 80
 EXPOSE 80
 
-# Start Apache
+# شغل Apache
 CMD ["apache2-foreground"]
