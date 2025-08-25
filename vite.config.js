@@ -1,6 +1,4 @@
-import {
-    defineConfig
-} from 'vite';
+import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from "@tailwindcss/vite";
 
@@ -15,4 +13,10 @@ export default defineConfig({
     server: {
         cors: true,
     },
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        emptyOutDir: true,
+    },
+    base: process.env.APP_URL ? process.env.APP_URL + '/' : '/',
 });
