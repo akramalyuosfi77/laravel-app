@@ -25,12 +25,13 @@ RUN composer install --no-interaction --no-dev --optimize-autoloader
 # 7. بناء ملفات الواجهة الأمامية
 RUN npm install && npm run build
 
-# 8. ضبط صلاحيات المجلدات التي يكتب فيها Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache
+# ===================================================================
+# ==      الخطوة الحاسمة: تشغيل migrations وإنشاء الجداول      ==
+# ===================================================================
+# 8. تشغيل أوامر Laravel النهائية
+RUN php artisan migrate --force \
+ && chown -R www-data:www-data storage bootstrap/cache
 
-# ===================================================================
-# ==      الخطوة الحاسمة: تعديل ملف إعدادات Apache مباشرة      ==
-# ===================================================================
 # 9. تعديل ملف إعدادات Apache ليشير إلى مجلد public
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 RUN a2enmod rewrite
