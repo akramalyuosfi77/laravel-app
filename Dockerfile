@@ -47,9 +47,12 @@ WORKDIR /var/www/html
 COPY --from=builder /var/www/html .
 
 # ===================================================================
-# ==      الخطوة الحاسمة: إصلاح الصلاحيات بعد النسخ مباشرة      ==
+# ==      الخطوة الحاسمة: تشغيل أوامر Laravel بعد النسخ      ==
 # ===================================================================
-RUN chown -R www-data:www-data /var/www/html \
+RUN php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache \
+ && chown -R www-data:www-data /var/www/html \
  && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
