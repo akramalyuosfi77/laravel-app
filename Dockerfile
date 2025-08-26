@@ -28,8 +28,11 @@ RUN npm install && npm run build
 # 8. ضبط صلاحيات المجلدات التي يكتب فيها Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# 9. إعداد Apache ليشير إلى مجلد public
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+# ===================================================================
+# ==      الخطوة الحاسمة: تعديل ملف إعدادات Apache مباشرة      ==
+# ===================================================================
+# 9. تعديل ملف إعدادات Apache ليشير إلى مجلد public
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 RUN a2enmod rewrite
 
 # 10. تشغيل الخادم
