@@ -1,10 +1,9 @@
 # ===================================================================
 # ==                  المرحلة الأولى: البناء (Builder)                ==
 # ===================================================================
-# استخدم نفس صورة PHP كأساس لمرحلة البناء
 FROM php:8.2-apache as builder
 
-# 1) تثبيت كل الحزم المطلوبة للبناء (PHP + Node.js + SQLite)
+# 1) تثبيت كل الحزم المطلوبة للبناء
 RUN apt-get update && apt-get install -y \
     git unzip zip \
     sqlite3 libsqlite3-dev \
@@ -17,21 +16,20 @@ RUN apt-get update && apt-get install -y \
 # 2) تثبيت Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# 3) نسخ ملفات المشروع والبدء في العمل
+# 3) نسخ ملفات المشروع
 WORKDIR /var/www/html
 COPY . .
 
 # 4) تثبيت اعتماديات PHP
 RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
-# 5) تثبيت اعتماديات الواجهة الأمامية وبناء التصميم
+# 5) بناء الواجهة الأمامية
 RUN npm install
 RUN npm run build
 
 # ===================================================================
 # ==                المرحلة الثانية: الإنتاج (Production)             ==
 # ===================================================================
-# ابدأ من صورة PHP-Apache نظيفة للإنتاج
 FROM php:8.2-apache
 
 # 1) إعداد Apache
@@ -40,8 +38,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && a2enmod rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# 2) تثبيت امتدادات PHP المطلوبة للتشغيل فقط
-#    (تم إضافة apt-get update هنا لإصلاح الخطأ)
+# 2) تثبيت امتدادات PHP المطلوبة للتشغيل
 RUN apt-get update && apt-get install -y \
     sqlite3 libsqlite3-dev \
     libzip-dev libonig-dev libxml2-dev \
