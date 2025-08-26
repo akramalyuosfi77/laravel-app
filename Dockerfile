@@ -4,7 +4,7 @@
 # استخدم نفس صورة PHP كأساس لمرحلة البناء
 FROM php:8.2-apache as builder
 
-# 1) تثبيت كل الحزم المطلوبة للبناء (PHP + Node.js)
+# 1) تثبيت كل الحزم المطلوبة للبناء (PHP + Node.js + SQLite)
 RUN apt-get update && apt-get install -y \
     git unzip zip \
     sqlite3 libsqlite3-dev \
@@ -40,8 +40,10 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && a2enmod rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# 2) تثبيت امتدادات PHP المطلوبة للتشغيل فقط (صورة أصغر حجماً)
+# 2) تثبيت امتدادات PHP المطلوبة للتشغيل فقط (مع إضافة SQLite)
 RUN apt-get update && apt-get install -y \
+    # --- الإضافة الجديدة: تثبيت حزم SQLite الضرورية للتشغيل ---
+    sqlite3 libsqlite3-dev \
     libzip-dev libonig-dev libxml2-dev \
     libpng-dev libjpeg-dev libfreetype6-dev \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
