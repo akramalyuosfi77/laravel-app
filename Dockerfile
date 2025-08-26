@@ -3,27 +3,16 @@
 # ===================================================================
 FROM php:8.2-apache as builder
 
-# 1) تثبيت كل الحزم المطلوبة للبناء
+# ... (كل شيء في مرحلة البناء يبقى كما هو) ...
 RUN apt-get update && apt-get install -y \
-    git unzip zip \
-    sqlite3 libsqlite3-dev \
-    libzip-dev libonig-dev libxml2-dev \
-    libpng-dev libjpeg-dev libfreetype6-dev \
-    nodejs npm \
+    git unzip zip sqlite3 libsqlite3-dev libzip-dev libonig-dev libxml2-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev nodejs npm \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
  && docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_sqlite bcmath exif zip
-
-# 2) تثبيت Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
-
-# 3) نسخ ملفات المشروع
 WORKDIR /var/www/html
 COPY . .
-
-# 4) تثبيت اعتماديات PHP
 RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
-
-# 5) بناء الواجهة الأمامية
 RUN npm install
 RUN npm run build
 
@@ -32,26 +21,38 @@ RUN npm run build
 # ===================================================================
 FROM php:8.2-apache
 
-# 1) إعداد Apache
+# ... (كل شيء في مرحلة الإنتاج يبقى كما هو) ...
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && a2enmod rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# 2) تثبيت امتدادات PHP المطلوبة للتشغيل
 RUN apt-get update && apt-get install -y \
-    sqlite3 libsqlite3-dev \
-    libzip-dev libonig-dev libxml2-dev \
+    sqlite3 libsqlite3-dev libzip-dev libonig-dev libxml2-dev \
     libpng-dev libjpeg-dev libfreetype6-dev \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
  && docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_sqlite bcmath exif zip
 
-# 3) نسخ الملفات الجاهزة من مرحلة البناء
 WORKDIR /var/www/html
-COPY --from=builder /var/www/html .
 
-# 4) تأكد من وجود ملف قاعدة البيانات وصلاحيات Laravel
-RUN mkdir -p database storage/logs bootstrap/cache \
+# --- التغيير الحاسم هنا ---
+# 1. انسخ كل شيء ما عدا مجلد public
+COPY --from=builder /var/www/html/app ./app
+COPY --from=builder /var/www/html/bootstrap ./bootstrap
+COPY --from=builder /var/www/html/config ./config
+COPY --from=builder /var/www/html/database ./database
+COPY --from=builder /var/www/html/resources ./resources
+COPY --from=builder /var/www/html/routes ./routes
+COPY --from=builder /var/www/html/storage ./storage
+COPY --from=builder /var/www/html/vendor ./vendor
+COPY --from=builder /var/www/html/*.php .
+COPY --from=builder /var/www/html/composer.json .
+COPY --from=builder /var/www/html/composer.lock .
+
+# 2. انسخ مجلد public بأكمله بشكل صريح ومنفصل
+COPY --from=builder /var/www/html/public ./public
+
+# ... (بقية الملف كما هو) ...
+RUN mkdir -p database/migrations/tenant \
  && touch database/database.sqlite storage/logs/laravel.log \
  && chown -R www-data:www-data storage bootstrap/cache database public \
  && chmod -R 775 storage bootstrap/cache database public
