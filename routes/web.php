@@ -116,3 +116,47 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+// ==========================================================
+// ==   مسار مؤقت لتشخيص مشكلة ملفات build على Render   ==
+// ==========================================================
+use Illuminate\Support\Facades\File;
+
+Route::get('/debug-render-files', function () {
+    $path = public_path('build');
+
+    if (!File::exists($path)) {
+        return response('Directory not found: ' . $path, 404);
+    }
+
+    if (!File::isDirectory($path)) {
+        return response('Path exists, but is not a directory: ' . $path, 500);
+    }
+
+    $files = File::allFiles($path);
+    $output = '<h1>Files in ' . $path . '</h1>';
+    $output .= '<ul>';
+
+    if (empty($files)) {
+        $output .= '<li>Directory is empty.</li>';
+    } else {
+        foreach ($files as $file) {
+            $output .= '<li>' . $file->getPathname() . ' (' . $file->getSize() . ' bytes)</li>';
+        }
+    }
+
+    $output .= '</ul>';
+
+    // تحقق من وجود manifest.json تحديداً
+    $manifestPath = public_path('build/manifest.json');
+    if (File::exists($manifestPath)) {
+        $output .= '<h2>Manifest.json FOUND!</h2>';
+        $output .= '<pre>' . File::get($manifestPath) . '</pre>';
+    } else {
+        $output .= '<h2>Manifest.json NOT FOUND at ' . $manifestPath . '</h2>';
+    }
+
+    return $output;
+});
+
