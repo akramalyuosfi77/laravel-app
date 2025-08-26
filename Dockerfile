@@ -40,9 +40,9 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && a2enmod rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# 2) تثبيت امتدادات PHP المطلوبة للتشغيل فقط (مع إضافة SQLite)
+# 2) تثبيت امتدادات PHP المطلوبة للتشغيل فقط
+#    (تم إضافة apt-get update هنا لإصلاح الخطأ)
 RUN apt-get update && apt-get install -y \
-    # --- الإضافة الجديدة: تثبيت حزم SQLite الضرورية للتشغيل ---
     sqlite3 libsqlite3-dev \
     libzip-dev libonig-dev libxml2-dev \
     libpng-dev libjpeg-dev libfreetype6-dev \
