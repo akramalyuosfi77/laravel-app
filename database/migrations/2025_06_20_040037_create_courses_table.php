@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('semester'); // الترم (مثال: 1، 2)
             $table->foreignId('specialization_id')->constrained()->onDelete('cascade'); // مفتاح خارجي للتخصص
             $table->text('description')->nullable(); // وصف المادة (اختياري)
-            $table->boolean('student_replies_enabled')->default(true)->after('description');
+            $table->boolean('student_replies_enabled')->default(true);
             $table->timestamps();
 
 
