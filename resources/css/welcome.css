@@ -194,6 +194,18 @@ section {
     }
 }
 
+/* Header Fixes */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -869,12 +881,16 @@ section {
         top: 80px;
         left: 0;
         right: 0;
-        background: var(--bg-card);
-        box-shadow: var(--shadow-lg);
+        background-color: #0f172a !important;
+        /* Force solid background */
+        border-bottom: 2px solid var(--brand-primary);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.4s ease-in-out;
+        z-index: 20000;
     }
+
 
     .mobile-menu.active {
         max-height: 100vh;

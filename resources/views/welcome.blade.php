@@ -14,6 +14,14 @@
         ['href' => '#login-options', 'label' => 'خيارات الدخول'],
         ['href' => '#statistics', 'label' => 'إحصائيات'],
     ];
+
+    $dashboardRoute = route('login');
+    if(auth()->check()) {
+        $role = auth()->user()->role;
+        if($role === 'admin') $dashboardRoute = route('admin.dashboard');
+        elseif($role === 'doctor') $dashboardRoute = route('doctor.dashboard');
+        elseif($role === 'student') $dashboardRoute = route('student.dashboard');
+    }
     $loginOptions = [
         [
             'icon' => 'fas fa-user-graduate',
@@ -149,7 +157,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جامعة الحضارة | صرحك نحو المستقبل</title>
+    <title>نورس | منصة التعليم الجامعي الإلكترونية</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="نورس - منصة تعليمية إلكترونية متكاملة لإدارة العملية التعليمية الجامعية. نظام شامل للطلاب والمحاضرين والإدارة مع واجهة سهلة الاستخدام.">
+    <meta name="keywords" content="نورس, منصة تعليمية, تعليم إلكتروني, جامعة الحضارة, نظام إدارة التعليم, LMS, منصة جامعية, تعليم عن بعد">
+    <meta name="author" content="Nooris Educational Platform">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="نورس | منصة التعليم الجامعي الإلكترونية">
+    <meta property="og:description" content="منصة تعليمية متكاملة لإدارة العملية التعليمية بكفاءة وسهولة">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nooris.me">
+    <meta property="og:site_name" content="نورس">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="نورس | منصة التعليم الجامعي الإلكترونية">
+    <meta name="twitter:description" content="منصة تعليمية متكاملة لإدارة العملية التعليمية">
 
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
@@ -186,10 +212,17 @@
                 </ul>
             </nav>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <a href="{{ $loginRoute }}" class="login-btn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    دخول
-                </a>
+                @auth
+                    <a href="{{ $dashboardRoute }}" class="login-btn">
+                        <i class="fas fa-tachometer-alt"></i>
+                        لوحة التحكم
+                    </a>
+                @else
+                    <a href="{{ $loginRoute }}" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        دخول
+                    </a>
+                @endauth
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -203,7 +236,21 @@
                 @foreach($mobileExtraLinks as $link)
                     <li><a href="{{ $link['href'] }}">{{ $link['label'] }}</a></li>
                 @endforeach
-                <li><a href="{{ $loginRoute }}" class="login-btn">دخول</a></li>
+                @auth
+                    <li>
+                        <a href="{{ $dashboardRoute }}" class="login-btn" style="text-align: center; justify-content: center;">
+                            <i class="fas fa-tachometer-alt" style="margin-left: 8px;"></i>
+                            لوحة التحكم
+                        </a>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ $loginRoute }}" class="login-btn" style="text-align: center; justify-content: center;">
+                            <i class="fas fa-sign-in-alt" style="margin-left: 8px;"></i>
+                            دخول
+                        </a>
+                    </li>
+                @endauth
             </ul>
         </div>
     </header>
@@ -234,8 +281,8 @@
                             :icon="$option['icon']" 
                             :title="$option['title']" 
                             :description="$option['description']" 
-                            :cta="$option['cta']" 
-                            :ctaLink="$loginRoute"
+                            :cta="auth()->check() ? 'الذهاب للوحة التحكم' : $option['cta']" 
+                            :ctaLink="$dashboardRoute"
                             :delay="$loop_index * 100"
                         />
                     @endforeach
