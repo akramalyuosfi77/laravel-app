@@ -26,41 +26,31 @@ class UsersTableSeeder extends Seeder
 
         
 
-        //مدير
-         // دكتور
-       /* DB::table('users')->insert([
-            'name' => 'Akram a',
-            'email' => 'akram@gmail.com',
+        // مدير
+        DB::table('users')->insert([
+            'name' => 'Akram Admin',
+            'email' => 'admin@nooris.me',
             'role' => 'admin',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('admin123'),
             'email_verified_at' => now(),
         ]);
 
         // دكتور
         DB::table('users')->insert([
-            'name' => 'Wael d',
-            'email' => 'doctor@gmail.com',
+            'name' => 'Wael Doctor',
+            'email' => 'doctor@nooris.me',
             'role' => 'doctor',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('doctor123'),
             'email_verified_at' => now(),
         ]);
-
-        DB::table('users')->insert([
-            'name' => 'Wae d',
-            'email' => 'doctor1@gmail.com',
-            'role' => 'doctor',
-            'password' => Hash::make('123456789'),
-            'email_verified_at' => now(),
-        ]);
-
 
         // طالب
         DB::table('users')->insert([
-            'name' => 'Alaa s',
-            'email' => 'student@gmail.com',
+            'name' => 'Student Test',
+            'email' => 'student@nooris.me',
             'role' => 'student',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('student123'),
             'email_verified_at' => now(),
-        ]);*/
+        ]);
     }
 }
