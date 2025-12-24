@@ -13,11 +13,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        $this->call(UsersTableSeeder::class);
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // إنشاء حساب المدير
+        User::create([
+            'name' => 'Akram Admin',
+            'email' => 'admin@nooris.me',
+            'role' => 'admin',
+            'password' => bcrypt('admin123'),
+            'email_verified_at' => now(),
+        ]);
+
+        // إنشاء حساب الدكتور
+        User::create([
+            'name' => 'Wael Doctor',
+            'email' => 'doctor@nooris.me',
+            'role' => 'doctor',
+            'password' => bcrypt('doctor123'),
+            'email_verified_at' => now(),
+        ]);
+
+        // إنشاء حساب الطالب
+        User::create([
+            'name' => 'Student Test',
+            'email' => 'student@nooris.me',
+            'role' => 'student',
+            'password' => bcrypt('student123'),
+            'email_verified_at' => now(),
         ]);
     }
 }
