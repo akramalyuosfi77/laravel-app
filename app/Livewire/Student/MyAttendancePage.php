@@ -9,6 +9,8 @@ use Livewire\Component;
 use App\Models\Course;
 use App\Models\Lecture;
 use App\Models\Attendance;
+use Illuminate\Http\Request;
+
 
 class MyAttendancePage extends Component
 {
@@ -17,6 +19,9 @@ class MyAttendancePage extends Component
 
     // خاصية لتخزين تفاصيل الحضور لمادة معينة عند طلبها
     public $detailsForCourse = null;
+
+    // خاصية للتحكم في ظهور نافذة المسح الضوئي
+    public $showScannerModal = false;
 
     /**
      * دالة mount تُنفذ عند تحميل المكون.
@@ -131,8 +136,78 @@ class MyAttendancePage extends Component
         $this->detailsForCourse = null;
     }
 
+    public function openScannerModal()
+    {
+        $this->showScannerModal = true;
+    }
+
+    public function closeScannerModal()
+    {
+        $this->showScannerModal = false;
+    }
+
+    public function handleScannedCode($url)
+    {
+        // التحقق من أن الرابط يتبع النطاق الصحيح للتطبيق
+        if (strpos($url, config('app.url')) === false && strpos($url, 'localhost') === false && strpos($url, '127.0.0.1') === false) {
+            $this->dispatch('showToast', message: 'رمز QR غير صالح.', type: 'error');
+            return;
+        }
+
+        // إعادة التوجيه إلى الرابط لتسجيل الحضور
+        return redirect()->to($url);
+    }
+
     public function render()
     {
         return view('livewire.student.my-attendance-page');
     }
+
+// ... داخل كلاس StudentDataController ...
+
+/**
+ * يجلب ملخص الحضور والغياب للطالب في مواده الحالية.
+ * (النسخة النهائية والمطابقة لمنطقك الاحترافي)
+ */
+public function getAttendanceSummary(Request $request)
+{
+    $user = $this->_getUserFromToken($request, 'student');
+
+    if (!$user || !$user->student) {
+        return response()->json(['message' => 'غير مصرح به أو لا يوجد ملف طالب.'], 401);
+    }
+
+    $student = $user->student;
+    $currentCourses = $student->getCurrentCourses()->get();
+    $summary = [];
+
+    foreach ($currentCourses as $course) {
+        // --- ⭐ 1. استخدام نفس منطقك لجلب عدد المحاضرات ---
+        $totalLectures = \App\Models\Lecture::where('course_id', $course->id)->count();
+
+        if ($totalLectures > 0) {
+            // --- ⭐ 2. استخدام نفس منطقك الدقيق مع whereHas ---
+            $attendedCount = \App\Models\Attendance::where('student_id', $student->id)
+                ->where('status', 'present')
+                ->whereHas('lecture', function ($query) use ($course) {
+                    $query->where('course_id', $course->id);
+                })
+                ->count();
+
+            // حساب النسبة المئوية
+            $attendancePercentage = round(($attendedCount / $totalLectures) * 100);
+        } else {
+            // إذا لم تكن هناك محاضرات، النسبة 100% (كما فعلت أنت تماماً)
+            $attendancePercentage = 100;
+        }
+
+        $summary[] = [
+            'course_name' => $course->name,
+            'attendance_percentage' => $attendancePercentage,
+        ];
+    }
+
+    return response()->json($summary);
+}
+
 }

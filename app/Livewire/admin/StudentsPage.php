@@ -162,6 +162,21 @@ class StudentsPage extends Component
         }
     }
 
+    public function toggleRepresentative($id)
+    {
+        try {
+            $student = Student::findOrFail($id);
+            $student->is_representative = !$student->is_representative;
+            $student->save();
+            
+            $status = $student->is_representative ? 'تم تعيين الطالب كمندوب' : 'تم إلغاء تعيين الطالب كمندوب';
+            $this->dispatch('showToast', message: $status, type: 'success');
+        } catch (\Exception $e) {
+            Log::error('Error toggling representative: ' . $e->getMessage());
+            $this->dispatch('showToast', message: 'حدث خطأ أثناء تغيير حالة المندوب.', type: 'error');
+        }
+    }
+
     // --- دوال مساعدة ---
     public function resetForm() { $this->reset(); $this->resetValidation(); }
     public function openForm() { $this->resetForm(); $this->showForm = true; }

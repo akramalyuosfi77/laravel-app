@@ -27,8 +27,23 @@ class SubmissionGraded extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database']; // حفظ في قاعدة البيانات
+        return ['database', 'fcm']; // ✅✅✅ التعديل هنا
     }
+
+    public function toFcm(object $notifiable): \Kreait\Firebase\Messaging\CloudMessage
+{
+    $assignmentTitle = $this->submission->assignment->title ?? 'تكليف';
+
+    return \Kreait\Firebase\Messaging\CloudMessage::withTarget('token', $notifiable->fcm_token)
+        ->withNotification([
+            'title' => 'تم تقييم واجبك!',
+            'body' => "لقد حصلت على درجة في التكليف: '{$assignmentTitle}'.",
+        ])
+        ->withData([
+            'type' => 'grading',
+            'assignment_id' => (string) $this->submission->assignment_id,
+        ]);
+}
 
     /**
      * Get the array representation of the notification.

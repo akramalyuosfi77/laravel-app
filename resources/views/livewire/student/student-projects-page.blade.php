@@ -1,46 +1,100 @@
 
+
 <div>
-    {{-- 1. الهيدر المدمج والذكي --}}
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-zinc-800 dark:text-white">إدارة المشاريع</h1>
-            <p class="mt-1 text-zinc-500 dark:text-zinc-400">إدارة، إبداع، وتنظيم مشاريعك في مكان واحد.</p>
+    {{-- Hero Section --}}
+    <div class="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 shadow-2xl shadow-purple-500/20">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-300 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
         </div>
-        <div class="w-full md:w-auto flex items-center gap-2">
-            <div class="relative w-full md:w-64">
-                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-zinc-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+
+        <div class="relative z-10 p-8 md:p-12">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="order-2 md:order-1">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full mb-4">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        <span class="text-sm font-bold text-white">مركز المشاريع</span>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+                        🚀 إدارة المشاريع
+                    </h1>
+                    <p class="text-xl text-white/90 mb-6 leading-relaxed">
+                        إدارة، إبداع، وتنظيم مشاريعك في مكان واحد!
+                    </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        <button wire:click="openForm" class="group relative inline-flex items-center justify-center px-8 py-4 overflow-hidden font-bold text-purple-600 transition-all duration-300 bg-white rounded-2xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/50 shadow-xl">
+                            <span class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-purple-100 opacity-50 rotate-12 group-hover:-translate-x-40 ease"></span>
+                            <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span class="relative">إضافة مشروع جديد</span>
+                        </button>
+                    </div>
                 </div>
-                <input wire:model.live="search" placeholder="ابحث بعنوان المشروع أو وصفه..." class="w-full pr-11 pl-4 py-2.5 border border-zinc-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all">
+
+                <div class="order-1 md:order-2 flex justify-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-white/20 rounded-full blur-3xl"></div>
+                        <lottie-player
+                            src="/animations/Demo.json"
+                            background="transparent"
+                            speed="1"
+                            style="width: 100%; max-width: 400px; height: auto;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+                    </div>
+                </div>
             </div>
-            <button wire:click="openForm" class="flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>إضافة مشروع جديد</span>
-            </button>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="currentColor" class="text-slate-50 dark:text-zinc-900"/>
+            </svg>
+        </div>
+    </div>
+
+    {{-- Search Bar --}}
+    <div class="mb-8">
+        <div class="relative group max-w-2xl mx-auto">
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition"></div>
+            <div class="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-1">
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-zinc-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input wire:model.live="search" placeholder="🔍 ابحث بعنوان المشروع أو وصفه..." class="w-full pr-11 pl-4 py-4 bg-transparent border-0 focus:ring-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 font-medium rounded-xl">
+                </div>
+            </div>
         </div>
     </div>
 
     {{-- فلاتر البحث والتصفية --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-6 bg-white dark:bg-zinc-800/50 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
-        <select
-            wire:model.live="filter_status"
-            class="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-xl bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all"
-        >
-            <option value="">فلتر حسب الحالة</option>
-            <option value="pending">معلق</option>
-            <option value="approved">موافق عليه</option>
-            <option value="rejected">مرفوض</option>
-            <option value="completed">مكتمل</option>
-        </select>
-        <select
-            wire:model.live="filter_course_id"
-            class="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-xl bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all"
-        >
-            <option value="">فلتر حسب المادة</option>
-            @foreach($this->studentCourses as $course)
-                <option value="{{ $course->id }}">{{ $course->name }}</option>
-            @endforeach
-        </select>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="relative group">
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition"></div>
+            <div class="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-1">
+                <select wire:model.live="filter_status" class="w-full px-6 py-4 bg-transparent border-0 focus:ring-0 text-zinc-900 dark:text-white font-medium rounded-xl">
+                    <option value="">📋 جميع الحالات</option>
+                    <option value="pending">⏳ معلق</option>
+                    <option value="approved">✅ موافق عليه</option>
+                    <option value="rejected">❌ مرفوض</option>
+                    <option value="completed">🎉 مكتمل</option>
+                </select>
+            </div>
+        </div>
+        <div class="relative group">
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition"></div>
+            <div class="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-1">
+                <select wire:model.live="filter_course_id" class="w-full px-6 py-4 bg-transparent border-0 focus:ring-0 text-zinc-900 dark:text-white font-medium rounded-xl">
+                    <option value="">📚 جميع المواد</option>
+                    @foreach($this->studentCourses as $course)
+                        <option value="{{ $course->id }}">{{ $course->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
     </div>
 
     {{-- قسم دعوات المشاريع المعلقة --}}
@@ -232,13 +286,27 @@
 
     {{-- قسم جميع المشاريع --}}
     <div class="mb-12">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            </div>
+        <div class="grid md:grid-cols-2 gap-8 items-center mb-8">
             <div>
-                <h2 class="text-2xl font-bold text-zinc-800 dark:text-white">جميع المشاريع</h2>
-                <p class="text-zinc-500 dark:text-zinc-400">استكشف المشاريع المتاحة للانضمام إليها</p>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black text-zinc-900 dark:text-white">🌟 جميع المشاريع</h2>
+                        <p class="text-zinc-600 dark:text-zinc-400">استكشف المشاريع المتاحة للانضمام إليها</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <lottie-player
+                    src="/animations/abihe.json"
+                    background="transparent"
+                    speed="1"
+                    style="width: 100%; max-width: 300px; height: auto;"
+                    loop
+                    autoplay>
+                </lottie-player>
             </div>
         </div>
 
@@ -713,5 +781,8 @@
             overflow: hidden;
         }
     </style>
+
+    {{-- Lottie Player Script --}}
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </div>
 

@@ -39,8 +39,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    /* ✅ الخط الأساسي للمشروع هو Changa */
-    --font-sans: 'Changa', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    /* ✅ الخط الأساسي للمشروع هو NeoSansArabic */
+    --font-sans: 'NeoSansArabic', 'IBMPlexArabic', 'DroidKufi', ui-sans-serif, system-ui, sans-serif;
 
     /* تعريف ألوان Zinc التي يستخدمها القالب الخاص بك */
     --color-zinc-50: #fafafa;
@@ -72,30 +72,53 @@
 |
 */
 @layer base {
+
     /*
     | 🔥 التحسين الأهم: تعريف خط Changa محلياً لسرعة فائقة
     | ❗ تذكير: تأكد من تحميل هذه الخطوط ووضعها في مجلد `public/fonts/`
     */
+    /*
+    | 🔥 تعريف الخطوط الجديدة
+    | تأكد من نسخ ملفات الخطوط إلى مجلد public/fonts/
+    */
     @font-face {
-        font-family: 'Changa';
+        font-family: 'NeoSansArabic';
+        src: url('/fonts/alfont_com_NeoSansArabic.ttf') format('truetype');
+        font-weight: normal;
         font-style: normal;
-        font-weight: 400; /* Regular */
         font-display: swap;
-        src: url('/fonts/Changa-Regular.woff2') format('woff2');
     }
+
     @font-face {
-        font-family: 'Changa';
+        font-family: 'DroidKufi';
+        src: url('/fonts/DroidKufi.ttf') format('truetype');
+        font-weight: normal;
         font-style: normal;
-        font-weight: 700; /* Bold */
         font-display: swap;
-        src: url('/fonts/Changa-Bold.woff2') format('woff2');
     }
+
     @font-face {
-        font-family: 'Changa';
+        font-family: 'IBMPlexArabic';
+        src: url('/fonts/IBMPlexArabic-Text.ttf') format('truetype');
+        font-weight: normal;
         font-style: normal;
-        font-weight: 800; /* ExtraBold, وليس 900. خط Changa لا يأتي بوزن 900 */
         font-display: swap;
-        src: url('/fonts/Changa-ExtraBold.woff2') format('woff2');
+    }
+
+    @font-face {
+        font-family: 'MontserratArabic';
+        src: url('/fonts/Montserrat-Arabic-Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Questv1';
+        src: url('/fonts/Questv1-Bold.otf') format('opentype');
+        font-weight: bold;
+        font-style: normal;
+        font-display: swap;
     }
 
     /*
@@ -109,7 +132,8 @@
         /* تطبيق الخط الافتراضي على كامل الموقع من متغيرات الـ Theme */
         font-family: var(--font-sans);
         /* حجم خط ومسافة أسطر مريحة للقراءة باللغة العربية */
-        font-size: 16px; /* 16px هو حجم قياسي ومناسب أكثر من 18px لمعظم الواجهات */
+        font-size: 16px;
+        /* 16px هو حجم قياسي ومناسب أكثر من 18px لمعظم الواجهات */
         line-height: 1.75;
         text-align: right;
         -webkit-font-smoothing: antialiased;
@@ -119,10 +143,50 @@
     }
 
     /* تعريف أنماط العناوين الرئيسية */
-    h1, h2, h3, h4, h5, h6 {
-        font-weight: 700; /* Bold */
-        letter-spacing: -0.5px;
+    /* تعريف أنماط العناوين الرئيسية */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Questv1', var(--font-sans);
+        /* استخدام Questv1 للعناوين */
+        font-weight: bold;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
     }
+
+    h1 {
+        font-size: 2.25rem;
+    }
+
+    /* 36px */
+    h2 {
+        font-size: 1.875rem;
+    }
+
+    /* 30px */
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    /* 24px */
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    /* 20px */
+    h5 {
+        font-size: 1.125rem;
+    }
+
+    /* 18px */
+    h6 {
+        font-size: 1rem;
+    }
+
+    /* 16px */
 }
 
 /*

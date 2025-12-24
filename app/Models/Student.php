@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // ✅ 1. تم استيراد العلاقة
 
 class Student extends Model
 {
@@ -17,15 +18,19 @@ class Student extends Model
         'gender',
         'date_of_birth',
         'address',
-        'profile_image', // تم إضافة هذا السطر
+        'profile_image',
         'batch_id',
+        'specialization_id', // ✅ 2. تمت إضافة مفتاح التخصص هنا
         'current_academic_year',
         'current_semester',
         'status',
         'user_id',
     ];
 
-    public function user()
+    /**
+     * Get the user that owns the student.
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -33,11 +38,24 @@ class Student extends Model
     /**
      * Get the batch that owns the student.
      */
-    public function batch()
+    public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
     }
-     // علاقة الطالب مع المشاريع التي يشارك فيها
+
+    /**
+     * ✅✅✅ [الحل الأساسي هنا] ✅✅✅
+     * Get the specialization that owns the student.
+     * تعريف العلاقة المفقودة التي تسببت في الخطأ.
+     */
+    public function specialization(): BelongsTo
+    {
+        return $this->belongsTo(Specialization::class);
+    }
+
+    /**
+     * The projects that the student participates in.
+     */
     public function projects()
     {
         return $this->belongsToMany(Project::class, 'project_student')
@@ -45,41 +63,33 @@ class Student extends Model
                     ->withTimestamps();
     }
 
-    public function submissions()
-{
-    return $this->hasMany(Submission::class);
-}
-
-   /**
-     * دالة مخصصة لجلب المواد التي يدرسها الطالب في الفصل الدراسي الحالي.
-     * هذه الدالة لا تعرف علاقة Eloquent قياسية، بل تنفذ استعلامًا مباشرًا ودقيقًا.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+    /**
+     * Get the submissions for the student.
      */
-  // ... داخل موديل Student ...
-
-/**
- * [مُحسَّن ومُصحَّح]
- * دالة لجلب استعلام المواد الحالية التي يدرسها الطالب.
- *
- * @return \Illuminate\Database\Eloquent\Builder
- */
-public function getCurrentCourses()
-{
-    // إذا لم يكن للطالب دفعة أو تخصص، نرجع استعلاماً فارغاً لتجنب الأخطاء
-    if (!$this->batch?->specialization_id) {
-        return Course::query()->whereRaw('1 = 0');
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class);
     }
 
-    // [تصحيح] بناء الاستعلام الصحيح الذي يمر عبر الدفعة والتخصص
-    return Course::query()
-        ->whereHas('specializations', function ($query) {
-            $query->where('specializations.id', $this->batch->specialization_id)
-                  ->where('specialization_course_academic_period.academic_year', $this->current_academic_year)
-                  ->where('specialization_course_academic_period.semester', $this->current_semester);
-        });
-}
+    /**
+     * [مُحسَّن ومُصحَّح]
+     * دالة لجلب استعلام المواد الحالية التي يدرسها الطالب.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getCurrentCourses()
+    {
+        // إذا لم يكن للطالب دفعة أو تخصص، نرجع استعلاماً فارغاً لتجنب الأخطاء
+        if (!$this->batch?->specialization_id) {
+            return Course::query()->whereRaw('1 = 0'); // استعلام فارغ آمن
+        }
 
-
-
+        // بناء الاستعلام الصحيح الذي يمر عبر الدفعة والتخصص
+        return Course::query()
+            ->whereHas('specializations', function ($query) {
+                $query->where('specializations.id', $this->batch->specialization_id)
+                      ->where('specialization_course_academic_period.academic_year', $this->current_academic_year)
+                      ->where('specialization_course_academic_period.semester', $this->current_semester);
+            });
+    }
 }

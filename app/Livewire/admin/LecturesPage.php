@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Log;  // <-- [إضافة]
 use Illuminate\Support\Str;
 use App\Livewire\Traits\WithSecureFileUploads;
 use Livewire\Attributes\Computed; // <-- [إضافة]
-use Carbon\Carbon; // <-- [إضافة]
+use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\URL; // <-- [إضافة]
 
 class LecturesPage extends Component
 {
@@ -33,8 +35,13 @@ class LecturesPage extends Component
     // --- خصائص الواجهة ---
     public $showForm = false;
     public $delete_id = null;
-    public $showViewModal = false;
+    public $showViewModal = false; // Restored
     public $viewedLecture = null;
+    public $showQrModal = false;
+    public $qrCodeImage = ''; // Initialize as empty string
+    public $qrLectureTitle = '';
+    public $qrLectureCourse = '';
+    public $qrLectureDoctor = '';
 
     // --- خصائص البحث والفلاتر ---
     public $search = '';
@@ -166,6 +173,49 @@ class LecturesPage extends Component
     public function markFileForDeletion($fileId) { $this->files_to_delete[] = $fileId; $this->existing_files = array_filter($this->existing_files, fn($file) => $file['id'] != $fileId); }
     public function viewLecture($id) { $this->viewedLecture = Lecture::with(['course', 'doctor', 'files'])->findOrFail($id); $this->showViewModal = true; }
     public function closeViewModal() { $this->showViewModal = false; $this->viewedLecture = null; }
+
+    public function generateQrCode($lectureId)
+    {
+        try {
+            $lecture = Lecture::with(['course', 'doctor'])->findOrFail($lectureId);
+            
+            $this->qrLectureTitle = $lecture->title;
+            $this->qrLectureCourse = $lecture->course->name ?? '';
+            $this->qrLectureDoctor = $lecture->doctor->name ?? '';
+            
+            // Generate a signed URL that is valid for 2 hours
+            $url = URL::temporarySignedRoute(
+                'attendance.mark',
+                now()->addHours(2),
+                ['lecture' => $lectureId]
+            );
+
+            // Generate QR Code as SVG and encode to Base64
+            $qrCode = QrCode::format('svg')
+                ->size(300)
+                ->color(79, 70, 229)
+                ->backgroundColor(255, 255, 255)
+                ->margin(2)
+                ->generate($url);
+            
+            // Convert to Base64 Data URI
+            $this->qrCodeImage = 'data:image/svg+xml;base64,' . base64_encode($qrCode);
+
+            $this->showQrModal = true;
+        } catch (\Exception $e) {
+            Log::error('Error generating QR code: ' . $e->getMessage());
+            $this->dispatch('showToast', message: 'حدث خطأ أثناء توليد رمز QR.', type: 'error');
+        }
+    }
+
+    public function closeQrModal()
+    {
+        $this->showQrModal = false;
+        $this->qrCodeImage = '';
+        $this->qrLectureTitle = '';
+        $this->qrLectureCourse = '';
+        $this->qrLectureDoctor = '';
+    }
 
     // --- دوال إعادة تعيين الترقيم ---
     public function updatingSearch() { $this->resetPage(); }

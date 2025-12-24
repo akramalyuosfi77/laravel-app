@@ -9,36 +9,39 @@ use Illuminate\Support\Facades\View; // تأكد من استدعاء الكلا�
 use Illuminate\Support\Facades\Auth; // تأكد من استدعاء الكلاس
 
 
+use Illuminate\Support\Facades\Schema;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    // public function register(): void
-    // {
-    //     //
-    // }
+    public function register(): void
+    {
+        //
+    }
 
     /**
      * Bootstrap any application services.
      */
+    public function boot(): void
+    {
+        Schema::defaultStringLength(191);
 
-// public function boot(): void
-// {
-//     // ... أي كود آخر موجود هنا ...
+        // ... أي كود آخر موجود هنا ...
 
-//     // 🔥 مشاركة بيانات المستخدم مع كل الـ Views بكفاءة عالية
-//     View::composer('*', function ($view) {
-//         if (Auth::check()) {
-//             $user = Auth::user();
-//             $view->with('currentUser', (object) [
-//                 'name' => $user->name,
-//                 'email' => $user->email,
-//                 'role' => $user->role,
-//                 // افترض أن لديك دالة initials() في مودل User
-//                 'initials' => $user->initials(),
-//             ]);
-//         }
-//     });
-// }
+        // 🔥 مشاركة بيانات المستخدم مع كل الـ Views بكفاءة عالية
+        View::composer('*', function ($view) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                $view->with('currentUser', (object) [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    // افترض أن لديك دالة initials() في مودل User
+                    'initials' => method_exists($user, 'initials') ? $user->initials() : substr($user->name, 0, 2),
+                ]);
+            }
+        });
+    }
 }

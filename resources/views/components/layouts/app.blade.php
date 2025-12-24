@@ -9,8 +9,8 @@
 @endphp
 
 @php
-    $role = auth()->user()->role;
-
+    // Retrieve user role for navigation, handling guests safely
+    $role = auth()->check() ? auth()->user()->role : null;
 @endphp
 
 <!DOCTYPE html>
@@ -46,7 +46,7 @@
     @livewireStyles
 </head>
 
-<body class="min-h-screen bg-zinc-50 dark:bg-zinc-900 font-cairo text-zinc-800 dark:text-zinc-200 transition-colors duration-300">
+<body class="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 transition-colors duration-300">
 
     {{-- @persist يحافظ على هذا الجزء من الصفحة عند التنقل، مما يعطي سرعة فائقة --}}
     @persist('sidebar')
@@ -63,20 +63,57 @@
                 <a href="{{ route('home') }}" class="flex items-center gap-3" wire:navigate>
                     <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg"><x-app-logo class="w-6 h-6 text-accent-foreground" /></div>
                     <div>
-                        <h1 class="text-lg font-bold text-zinc-900 dark:text-white">المنصة التعليمية</h1>
+                        <h1 class="text-lg font-bold text-zinc-900 dark:text-white" style="font-family: 'Questv1', sans-serif;">المنصة التعليمية</h1>
                         <p class="text-sm text-zinc-500 dark:text-zinc-400">نظام إدارة متقدم</p>
                     </div>
                 </a>
+                <button @click="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+                    <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </header>
+
+            {{-- Theme Selector Row --}}
+            <div class="p-4 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
                 <div class="flex items-center gap-2">
-                    <button @click="toggleTheme()" class="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-                        <svg x-show="theme === 'light'" class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        <svg x-show="theme === 'dark'" x-cloak class="w-5 h-5 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <span class="text-xs font-bold text-zinc-500 dark:text-zinc-400 ml-2">المظهر:</span>
+                    
+                    {{-- Light Mode Button --}}
+                    <button 
+                        @click="theme = 'light'; localStorage.setItem('theme', 'light'); document.documentElement.className = 'light';"
+                        :class="theme === 'light' ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg scale-110 ring-2 ring-amber-300' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-600'"
+                        class="group relative p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
+                        title="الوضع الفاتح"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
                     </button>
-                    <button @click="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
-                        <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+
+                    {{-- Dark Mode Button --}}
+                    <button 
+                        @click="theme = 'dark'; localStorage.setItem('theme', 'dark'); document.documentElement.className = 'dark';"
+                        :class="theme === 'dark' ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg scale-110 ring-2 ring-indigo-300' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-600'"
+                        class="group relative p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
+                        title="الوضع الداكن"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+
+                    {{-- System Mode Button --}}
+                    <button 
+                        @click="theme = 'system'; localStorage.setItem('theme', 'system'); if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.className = 'dark'; } else { document.documentElement.className = 'light'; }"
+                        :class="theme === 'system' ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg scale-110 ring-2 ring-emerald-300' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-600'"
+                        class="group relative p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
+                        title="حسب النظام"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
                     </button>
                 </div>
-            </header>
+            </div>
 
             <!-- Notifications Section -->
             <div class="p-4 border-b border-zinc-200 dark:border-zinc-700">
@@ -112,7 +149,7 @@
                             {{ auth()->user()->initials() }}
                         </div>
                         <div class="flex-1 min-w-0 text-right">
-                            <p class="font-semibold text-zinc-900 dark:text-white truncate">{{ auth()->user()->name }}</p>
+                            <p class="font-bold text-zinc-900 dark:text-white truncate" style="font-family: 'Questv1', sans-serif;">{{ auth()->user()->name }}</p>
                             <p class="text-sm text-zinc-500 dark:text-zinc-400 truncate">{{ auth()->user()->email }}</p>
                         </div>
                         <svg class="w-5 h-5 text-zinc-400 transition-transform" :class="{'rotate-180': isUserMenuOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>

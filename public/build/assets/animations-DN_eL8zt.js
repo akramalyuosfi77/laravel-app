@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{const n={root:null,rootMargin:"0px",threshold:.15},s=new IntersectionObserver((e,r)=>{e.forEach(t=>{t.isIntersecting&&t.target.classList.add("anim-visible")})},n);document.querySelectorAll('[class*="anim-"]').forEach(e=>s.observe(e))});

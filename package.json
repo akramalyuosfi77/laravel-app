@@ -3,6 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "postbuild": "node -e \"const fs=require('fs');const path=require('path');const src=path.join('public','build','.vite','manifest.json');const dest=path.join('public','build','manifest.json');if(fs.existsSync(src)){fs.copyFileSync(src,dest);}\"",
         "dev": "vite"
     },
     "dependencies": {

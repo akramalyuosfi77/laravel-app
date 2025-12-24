@@ -1,78 +1,139 @@
-<div>
-    {{-- 1. الهيدر المدمج والذكي --}}
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-zinc-800 dark:text-white">إدارة الدكاترة</h1>
-            <p class="mt-1 text-zinc-500 dark:text-zinc-400">إدارة بيانات وتفاصيل أعضاء هيئة التدريس.</p>
+<div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 100)">
+    {{-- 1. Hero Section المدمج - نفس تصميم صفحة الطلاب --}}
+    <div class="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-zinc-900 dark:via-slate-900 dark:to-zinc-900 border border-slate-200 dark:border-slate-800" x-show="loaded" x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
+        {{-- Animated Background Orbs --}}
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-10 right-10 w-72 h-72 bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-10 left-10 w-96 h-96 bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
         </div>
-        <div class="w-full md:w-auto flex items-center gap-2">
-            <div class="relative w-full md:w-64">
-                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-zinc-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+
+        <div class="relative z-10 p-8">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                {{-- Left Side: Animation --}}
+                <div class="order-1 md:order-1 flex justify-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                        <lottie-player
+                            src="{{ asset('animations/Welcome.json') }}"
+                            background="transparent"
+                            speed="1"
+                            style="width: 100%; max-width: 350px; height: auto;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+                    </div>
                 </div>
-                <input wire:model.live.debounce.300ms="search" placeholder="ابحث بالاسم, البريد, الهاتف..." class="w-full pr-11 pl-4 py-2.5 border border-zinc-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all">
+
+                {{-- Right Side: Content --}}
+                <div class="order-2 md:order-2">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-full mb-4">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        <span class="text-sm font-bold text-blue-700 dark:text-blue-300">نظام إدارة متقدم</span>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 via-blue-700 to-indigo-700 dark:from-slate-100 dark:via-blue-300 dark:to-indigo-300 mb-4 leading-tight">
+                        إدارة الدكاترة
+                    </h1>
+                    <p class="text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                        إدارة شاملة ومتقدمة لبيانات وتفاصيل أعضاء هيئة التدريس
+                    </p>
+
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-wrap gap-3">
+                        <div class="group relative flex-1 min-w-[200px]">
+                            <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition"></div>
+                            <div class="relative bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <input wire:model.live.debounce.300ms="search" placeholder="بحث بالاسم، البريد، الهاتف..." class="bg-transparent border-0 focus:ring-0 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 w-full">
+                            </div>
+                        </div>
+                        
+                        <button wire:click="openForm" class="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-bold transition-all hover:scale-105 shadow-xl shadow-blue-500/30 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>إضافة دكتور</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button wire:click="openForm" class="flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>إضافة دكتور</span>
-            </button>
         </div>
     </div>
 
-    {{-- 2. شبكة البطاقات التعريفية --}}
+    {{-- 2. شبكة البطاقات - تصميم بسيط موحد --}}
     <div wire:loading.class.delay="opacity-50" class="transition-opacity">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-            @php
-                $colorThemes = [
-                    ['gradient' => 'from-indigo-500 to-purple-500', 'border' => 'border-indigo-500', 'text' => 'text-indigo-500', 'overlay' => 'bg-gradient-to-br from-indigo-500/70 to-purple-500/70'],
-                    ['gradient' => 'from-teal-500 to-emerald-500', 'border' => 'border-teal-500', 'text' => 'text-teal-500', 'overlay' => 'bg-gradient-to-br from-teal-500/70 to-emerald-500/70'],
-                    ['gradient' => 'from-amber-500 to-orange-500', 'border' => 'border-amber-500', 'text' => 'text-amber-500', 'overlay' => 'bg-gradient-to-br from-amber-500/70 to-orange-500/70'],
-                    ['gradient' => 'from-rose-500 to-pink-500', 'border' => 'border-rose-500', 'text' => 'text-rose-500', 'overlay' => 'bg-gradient-to-br from-rose-500/70 to-pink-500/70'],
-                    ['gradient' => 'from-blue-500 to-cyan-500', 'border' => 'border-blue-500', 'text' => 'text-blue-500', 'overlay' => 'bg-gradient-to-br from-blue-500/70 to-cyan-500/70'],
-                    ['gradient' => 'from-violet-500 to-fuchsia-500', 'border' => 'border-violet-500', 'text' => 'text-violet-500', 'overlay' => 'bg-gradient-to-br from-violet-500/70 to-fuchsia-500/70'],
-                ];
-            @endphp
-
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             @forelse($doctors as $doctor)
-                @php
-                    $theme = $colorThemes[$loop->index % count($colorThemes)];
-                @endphp
+                <div class="group relative bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5">
+                    {{-- Subtle gradient background --}}
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 rounded-2xl"></div>
+                    
+                    <div class="relative z-10 flex flex-col h-full text-center">
+                        {{-- Profile Image --}}
+                        <div class="relative inline-block mx-auto mb-4">
+                            @if($doctor->profile_image)
+                                <img src="{{ asset('storage/' . $doctor->profile_image) }}" alt="صورة الدكتور" class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-zinc-800 shadow-lg">
+                            @else
+                                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white ring-4 ring-white dark:ring-zinc-800 shadow-lg">
+                                    <svg class="w-12 h-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                    </svg>
+                                </div>
+                            @endif
+                            <div class="absolute bottom-0 right-0 h-6 w-6 rounded-full border-2 border-white dark:border-zinc-800 bg-gradient-to-tr from-blue-500 to-indigo-500"></div>
+                        </div>
 
-                <div class="group relative bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 text-center">
-                    <div class="absolute inset-0 bg-gradient-to-br {{ $theme['gradient'] }} opacity-5 dark:opacity-10 rounded-2xl -z-10"></div>
-
-                    <div class="relative inline-block mb-4">
-                        @if($doctor->profile_image)
-                            <img src="{{ asset('storage/' . $doctor->profile_image) }}" alt="صورة الدكتور" class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-zinc-800">
-                        @else
-                            <div class="w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-500 ring-4 ring-white dark:ring-zinc-800">
-                                <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                        {{-- Name & Info --}}
+                        <h3 class="font-bold text-xl text-zinc-900 dark:text-white leading-tight mb-2">{{ $doctor->name }}</h3>
+                        
+                        {{-- Details --}}
+                        <div class="flex-grow space-y-2 mb-5">
+                            <div class="flex items-center justify-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="truncate">{{ $doctor->email }}</span>
                             </div>
-                        @endif
-                        <div class="absolute bottom-0 right-0 h-6 w-6 rounded-full border-2 border-white dark:border-zinc-800 bg-gradient-to-tr {{ $theme['gradient'] }}"></div>
-                    </div>
+                            @if($doctor->phone)
+                            <div class="flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                                <span>{{ $doctor->phone }}</span>
+                            </div>
+                            @endif
+                        </div>
 
-                    <h3 class="font-bold text-xl text-zinc-900 dark:text-white leading-tight">{{ $doctor->name }}</h3>
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">{{ $doctor->email }}</p>
-                    <p class="text-sm font-medium {{ $theme['text'] }} mt-2">{{ $doctor->phone ?? 'لا يوجد رقم هاتف' }}</p>
-
-                    <div class="absolute inset-0 bg-zinc-900/80 backdrop-blur-sm rounded-2xl flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button wire:click="edit({{ $doctor->id }} )" class="w-14 h-14 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transform transition-all hover:scale-110 shadow-lg">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        </button>
-                        <button wire:click="confirmDelete({{ $doctor->id }})" class="w-14 h-14 flex items-center justify-center bg-red-500/30 hover:bg-red-500/40 rounded-full text-white transform transition-all hover:scale-110 shadow-lg">
-                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                        {{-- Action Buttons - Unified Color --}}
+                        <div class="grid grid-cols-2 gap-2 mt-auto">
+                            <button wire:click="edit({{ $doctor->id }})" class="flex flex-col items-center gap-1.5 p-3 bg-slate-600 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-xl text-white transition-all hover:scale-105 shadow-md hover:shadow-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                <span class="text-xs font-bold">تعديل</span>
+                            </button>
+                            <button wire:click="confirmDelete({{ $doctor->id }})" class="flex flex-col items-center gap-1.5 p-3 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-xl text-white transition-all hover:scale-105 shadow-md hover:shadow-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span class="text-xs font-bold">حذف</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4 p-12 text-center bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-zinc-800/30 dark:to-zinc-900/30 rounded-2xl border border-dashed border-indigo-300 dark:border-zinc-700">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-12 h-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                <div class="col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4 p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-zinc-800/30 dark:to-zinc-900/30 rounded-2xl border border-dashed border-blue-300 dark:border-zinc-700">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-12 h-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
                     </div>
                     <h3 class="mt-4 text-lg font-bold text-zinc-800 dark:text-white">بناء الفريق الأكاديمي</h3>
                     <p class="mt-1 text-zinc-500 dark:text-zinc-400">لم تقم بإضافة أي دكتور بعد. ابدأ الآن بإضافة أعضاء هيئة التدريس.</p>
-                    <button wire:click="openForm" class="mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 mx-auto shadow-md shadow-indigo-500/20">
+                    <button wire:click="openForm" class="mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 mx-auto shadow-md shadow-blue-500/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span>إضافة أول دكتور</span>
                     </button>
@@ -82,13 +143,13 @@
     </div>
 
     {{-- Pagination --}}
-    @if($doctors->hasPages( ))
+    @if($doctors->hasPages())
     <div class="mt-8">
         {{ $doctors->links() }}
     </div>
     @endif
 
-    {{-- النوافذ المنبثقة (Modals) --}}
+    {{-- Form Modal - نفس التصميم القديم بدون تغيير --}}
     @if($showForm)
     <div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-data x-transition.opacity>
         <div @click.away="window.livewire.dispatch('close-form')" class="bg-white dark:bg-zinc-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col border border-zinc-200 dark:border-zinc-700">
@@ -116,7 +177,6 @@
                     <input id="phone" wire:model="phone" type="text" class="w-full px-4 py-2.5 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
                     @error('phone') <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                 </div>
-                 {{-- ✅ حقل كلمة السر --}}
                 <div>
                     <label for="password" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                         كلمة السر {{ $edit_id ? '(اختياري عند التعديل)' : '*' }}
@@ -176,3 +236,7 @@
     </div>
     @endif
 </div>
+
+@push('scripts')
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+@endpush

@@ -3,18 +3,18 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Kreait\Firebase\Messaging\CloudMessage;
 use App\Models\Project;
 use App\Models\Student;
+use App\Notifications\Channels\FcmChannel;
 
 class AddedToProjectTeam extends Notification
 {
     use Queueable;
 
     public $project;
-    public $inviter; // الطالب الذي أرسل الدعوة
+    public $inviter;
 
     public function __construct(Project $project, Student $inviter)
     {
@@ -24,7 +24,7 @@ class AddedToProjectTeam extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class];
     }
 
     public function toArray(object $notifiable): array
@@ -32,8 +32,22 @@ class AddedToProjectTeam extends Notification
         return [
             'project_id' => $this->project->id,
             'message' => "قام الطالب '{$this->inviter->name}' بدعوتك للانضمام إلى فريق مشروع '{$this->project->title}'.",
-            'url' => route('student.projects'), // يوجه الطالب لصفحة المشاريع الخاصة به ليرى الدعوة
-            'icon' => 'bi-people-fill' // أيقونة مناسبة للفريق
+            'url' => route('student.projects'),
+            'icon' => 'bi-people-fill'
         ];
+    }
+
+    public function toFcm(object $notifiable): CloudMessage
+    {
+        return CloudMessage::withTarget('token', $notifiable->fcm_token)
+            ->withNotification([
+                'title' => 'تمت إضافتك لفريق مشروع!',
+                'body' => "الطالب '{$this->inviter->name}' دعاك للانضمام إلى فريق مشروع '{$this->project->title}'.",
+            ])
+            ->withData([
+                'project_id' => (string) $this->project->id,
+                'type' => 'added_to_project_team',
+                'url' => route('student.projects'),
+            ]);
     }
 }

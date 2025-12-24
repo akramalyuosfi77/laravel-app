@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            // 💡 هذا هو العمود الذي سيحل المشكلة
-            // سيتم إضافته بعد عمود doctor_id ليكون الكود منظماً
-            $table->enum('supervision_status', ['pending', 'approved', 'rejected'])
-                  ->nullable() // مهم لكي لا يسبب مشاكل مع المشاريع التي ليس لها مشرف
-                  ->after('doctor_id');
+            if (!Schema::hasColumn('projects', 'supervision_status')) {
+                // 💡 هذا هو العمود الذي سيحل المشكلة
+                // سيتم إضافته بعد عمود doctor_id ليكون الكود منظماً
+                $table->enum('supervision_status', ['pending', 'approved', 'rejected'])
+                      ->nullable() // مهم لكي لا يسبب مشاكل مع المشاريع التي ليس لها مشرف
+                      ->after('doctor_id');
+            }
         });
     }
 

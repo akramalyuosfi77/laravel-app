@@ -17,9 +17,10 @@ class Course extends Model
         'code',
         'type',
         'description',
-        'student_replies_enabled', // للتأكد من وجوده
-        // لا حاجة لـ specialization_id, academic_year, semester هنا
-        // لأنها موجودة في الجدول الوسيط
+        'student_replies_enabled',
+        'specialization_id', // ✅ ضروري
+        'academic_year',     // ✅ ضروري
+        'semester',          // ✅ ضروري
     ];
 
     /**

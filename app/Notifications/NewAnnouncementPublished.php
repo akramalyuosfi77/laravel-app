@@ -3,9 +3,10 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Kreait\Firebase\Messaging\CloudMessage;
 use App\Models\Announcement;
+use App\Notifications\Channels\FcmChannel;
 
 class NewAnnouncementPublished extends Notification
 {
@@ -20,19 +21,36 @@ class NewAnnouncementPublished extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class];
     }
 
-    public function toArray(object $notifiable): array
-    {
-        // الرابط سيكون دائماً لصفحة لوحة التحكم الخاصة بالمستخدم
-        $url = route(strtolower($notifiable->role) . '.dashboard');
+   public function toArray(object $notifiable): array
+{
+    $url = route(strtolower($notifiable->role) . '.dashboard');
+    $userName = $this->announcement->user->name ?? 'المسؤول';
 
-        return [
-            'announcement_id' => $this->announcement->id,
-            'message' => "إعلان جديد من '{$this->announcement->user->name}': {$this->announcement->title}",
-            'url' => $url,
-            'icon' => 'bi-megaphone-fill',
-        ];
-    }
+    return [
+        'announcement_id' => $this->announcement->id,
+        'message' => "إعلان جديد من '{$userName}': {$this->announcement->title}",
+        'url' => $url,
+        'icon' => 'bi-megaphone-fill',
+    ];
+}
+
+public function toFcm(object $notifiable): CloudMessage
+{
+    $userName = $this->announcement->user->name ?? 'المسؤول';
+
+    return CloudMessage::withTarget('token', $notifiable->fcm_token)
+        ->withNotification([
+            'title' => 'إعلان جديد!',
+            'body' => "تم نشر إعلان بعنوان '{$this->announcement->title}' من '{$userName}'.",
+        ])
+        ->withData([
+            'announcement_id' => (string) $this->announcement->id,
+            'type' => 'new_announcement',
+            'url' => route(strtolower($notifiable->role) . '.dashboard'),
+        ]);
+}
+
 }

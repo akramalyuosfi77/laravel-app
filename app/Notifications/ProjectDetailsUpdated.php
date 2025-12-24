@@ -7,6 +7,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\Channels\FcmChannel;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class ProjectDetailsUpdated extends Notification
 {
@@ -23,7 +26,7 @@ class ProjectDetailsUpdated extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class];
     }
 
     public function toArray(object $notifiable): array
@@ -36,5 +39,20 @@ class ProjectDetailsUpdated extends Notification
             'url' => $url,
             'icon' => 'bi-pencil-square',
         ];
+    }
+
+    public function toFcm(object $notifiable): CloudMessage
+    {
+        $url = ($notifiable->role === 'doctor') ? route('doctor.projects') : route('student.projects');
+
+        return CloudMessage::withTarget('token', $notifiable->fcm_token)
+            ->withNotification([
+                'title' => 'تحديث تفاصيل المشروع!',
+                'body' => "قام '{$this->updaterName}' بتحديث تفاصيل مشروع '{$this->project->title}'.",
+            ])
+            ->withData([
+                'type' => 'project_details_updated',
+                'project_id' => (string) $this->project->id,
+            ]);
     }
 }

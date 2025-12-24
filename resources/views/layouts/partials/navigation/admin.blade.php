@@ -2,6 +2,15 @@
 <div class="space-y-1 pt-4 border-t border-zinc-200 dark:border-zinc-700/50">
     <h3 class="px-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{{ __('لوحة المسؤول') }}</h3>
 
+    {{-- Dashboard Link --}}
+    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+        <x-slot:icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+        </x-slot:icon>
+        <span class="font-semibold">{{ __('لوحة التحكم') }}</span>
+    </x-nav-link>
 
     <x-nav-link :href="route('admin.departments')" :active="request()->routeIs('admin.departments') || request()->routeIs('admin.departments.*')">
         <x-slot:icon><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></x-slot:icon>
@@ -88,8 +97,21 @@
         {{ __('صندوق الرسائل') }}
     </x-nav-link>
 
+    <x-nav-link :href="route('admin.backup')" :active="request()->routeIs('admin.backup')">
+        <x-slot:icon>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+            </svg>
+        </x-slot:icon>
+        {{ __('النسخ الاحتياطي') }}
+    </x-nav-link>
+
     <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users') || request()->routeIs('admin.users.*')">
-        <x-slot:icon><svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2h5"/></svg></x-slot:icon>
+        <x-slot:icon>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13.5 3.542a4 4 0 010 5.916"/>
+            </svg>
+        </x-slot:icon>
         {{ __('إدارة المستخدمين') }}
     </x-nav-link>
 </div>

@@ -11,5 +11,5 @@
         {{-- هذا المكان مخصص للأيقونة SVG --}}
         <span class="flex-shrink-0 w-6 h-6">{{ $icon }}</span>
     @endif
-    <span class="font-semibold">{{ $slot }}</span>
+    <span class="font-bold" style="font-family: 'Questv1', sans-serif;">{{ $slot }}</span>
 </a>

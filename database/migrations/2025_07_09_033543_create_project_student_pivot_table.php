@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->boolean('is_main_creator')->default(false); // لتحديد الطالب الرئيسي إذا لزم الأمر
             // 💡 إضافة العمود الجديد لتتبع حالة العضوية
-            $table->enum('membership_status', ['pending', 'approved', 'rejected'])->default('pending')->after('student_id'); // نضعه بعد عمود student_id ليكون منظماً
+            $table->enum('membership_status', ['pending', 'approved', 'rejected'])->default('pending'); // نضعه بعد عمود student_id ليكون منظماً
+            $table->boolean('is_main_creator')->default(false); // لتحديد الطالب الرئيسي إذا لزم الأمر
             $table->timestamps();
 
             // ضمان عدم تكرار نفس الزوج (مشروع، طالب)

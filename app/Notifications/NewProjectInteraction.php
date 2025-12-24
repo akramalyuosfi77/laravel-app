@@ -3,11 +3,11 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 use App\Models\Project;
-use App\Models\User;
+use App\Notifications\Channels\FcmChannel;
 
 class NewProjectInteraction extends Notification
 {
@@ -17,9 +17,6 @@ class NewProjectInteraction extends Notification
     public $message;
     public $icon;
 
-    /**
-     * Create a new notification instance.
-     */
     public function __construct(Project $project, string $message, string $icon)
     {
         $this->project = $project;
@@ -27,37 +24,38 @@ class NewProjectInteraction extends Notification
         $this->icon = $icon;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        // القنوات: قاعدة البيانات + FCM
+        return ['database', FcmChannel::class];
     }
 
-    /**
-     * Get the array representation of the notification.
-     */
-    // في app/Notifications/NewProjectInteraction.php
+    public function toArray(object $notifiable): array
+    {
+        $url = ($notifiable->role === 'doctor') ? route('doctor.projects') : route('student.projects');
 
-public function toArray(object $notifiable): array
-{
-    // --- 💡 المنطق الجديد لتحديد الرابط الصحيح ---
-    $url = '';
-    // $notifiable هو المستخدم الذي سيستقبل الإشعار
-    if ($notifiable->role === 'doctor') {
-        $url = route('doctor.projects');
-    } elseif ($notifiable->role === 'student') {
-        $url = route('student.projects');
+        return [
+            'project_id' => $this->project->id,
+            'message' => $this->message,
+            'url' => $url,
+            'icon' => $this->icon,
+        ];
     }
-    // --- نهاية المنطق الجديد ---
 
-    return [
-        'project_id' => $this->project->id,
-        'message' => $this->message,
-        'url' => $url, // 💡 استخدام المتغير الديناميكي $url
-        'icon' => $this->icon,
-    ];
-}
+    // دالة FCM
+    public function toFcm(object $notifiable): CloudMessage
+    {
+        $url = ($notifiable->role === 'doctor') ? route('doctor.projects') : route('student.projects');
 
+        return CloudMessage::withTarget('token', $notifiable->fcm_token)
+            ->withNotification([
+                'title' => 'تفاعل جديد على المشروع!',
+                'body' => $this->message,
+            ])
+            ->withData([
+                'project_id' => (string) $this->project->id,
+                'url' => $url,
+                'type' => 'project_interaction',
+            ]);
+    }
 }

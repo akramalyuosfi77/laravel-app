@@ -4,6 +4,9 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use App\Models\Project;
+use App\Notifications\Channels\FcmChannel;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class TeamInvitationUpdated extends Notification
 {
@@ -20,7 +23,10 @@ class TeamInvitationUpdated extends Notification
         $this->icon = $icon;
     }
 
-    public function via(object $notifiable): array { return ['database']; }
+    public function via(object $notifiable): array
+    {
+        return ['database', FcmChannel::class];
+    }
 
     public function toArray(object $notifiable): array
     {
@@ -30,5 +36,18 @@ class TeamInvitationUpdated extends Notification
             'url' => route('student.projects'),
             'icon' => $this->icon,
         ];
+    }
+
+    public function toFcm(object $notifiable): CloudMessage
+    {
+        return CloudMessage::withTarget('token', $notifiable->fcm_token)
+            ->withNotification([
+                'title' => 'تحديث دعوة الفريق!',
+                'body' => $this->message,
+            ])
+            ->withData([
+                'type' => 'team_invitation_updated',
+                'project_id' => (string) $this->project->id,
+            ]);
     }
 }

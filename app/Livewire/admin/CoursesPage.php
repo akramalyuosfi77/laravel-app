@@ -43,7 +43,7 @@ class CoursesPage extends Component
             'semester' => 'required|integer|min:1|max:2',
             'specialization_id' => 'required|exists:specializations,id',
             'description' => 'nullable|string',
-            'doctor_id' => 'nullable|exists:doctors,id',
+            'doctor_id' => 'required|exists:doctors,id',
         ];
     }
 
@@ -62,11 +62,16 @@ class CoursesPage extends Component
      */
     public function save()
     {
+        Log::info('Start saving course...', ['data' => $this->all()]); // تسجيل بداية العملية
+        
         $this->validate();
+        
+        Log::info('Validation passed.');
+
         try {
-            // بدء معاملة آمنة
             DB::transaction(function () {
-                // الخطوة 1: إنشاء أو تحديث المادة في جدول courses
+                Log::info('Transaction started.');
+                
                 $course = Course::updateOrCreate(
                     ['id' => $this->edit_id],
                     [
@@ -74,23 +79,29 @@ class CoursesPage extends Component
                         'code' => $this->code,
                         'type' => $this->type,
                         'description' => $this->description,
-                        // الحقول الأخرى تم نقلها للجدول الوسيط
+                        // إضافة الحقول الإجبارية الناقصة
+                        'academic_year' => $this->academic_year,
+                        'semester' => $this->semester,
+                        'specialization_id' => $this->specialization_id,
                     ]
                 );
+                
+                Log::info('Course saved/updated: ' . $course->id);
 
-                // الخطوة 2: إنشاء أو تحديث السجل في الجدول الوسيط الذي يربط كل شيء
                 SpecializationCourseAcademicPeriod::updateOrCreate(
+                    ['course_id' => $course->id],
                     [
-                        'course_id' => $course->id,
                         'specialization_id' => $this->specialization_id,
                         'academic_year' => $this->academic_year,
                         'semester' => $this->semester,
-                    ],
-                    [
                         'doctor_id' => $this->doctor_id,
                     ]
                 );
-            }); // نهاية المعاملة الآمنة
+                
+                Log::info('Pivot table updated.');
+            });
+
+            Log::info('Transaction committed.');
 
             $this->closeForm();
             $message = $this->edit_id ? 'تم تحديث المادة بنجاح' : 'تم إضافة المادة بنجاح';
@@ -98,7 +109,10 @@ class CoursesPage extends Component
 
         } catch (\Exception $e) {
             Log::error('Error saving course: ' . $e->getMessage());
-            $this->dispatch('showToast', message: 'حدث خطأ أثناء حفظ المادة.', type: 'error');
+            Log::error($e->getTraceAsString()); // تسجيل تتبع الخطأ
+            
+            // عرض رسالة الخطأ الحقيقية للمستخدم (مؤقتاً للتشخيص)
+            $this->dispatch('showToast', message: 'خطأ: ' . $e->getMessage(), type: 'error');
         }
     }
 
@@ -180,7 +194,7 @@ class CoursesPage extends Component
     #[Computed(cache: true)]
     public function departments() { return Department::orderBy('name')->get(); }
 
-    #[Computed(cache: true)]
+    #[Computed]
     public function doctors() { return Doctor::orderBy('name')->get(); }
 
     #[Computed]

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use App\Livewire\Traits\WithSecureFileUploads;
 use Livewire\Attributes\Computed;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\URL;
 
 class LecturesPage extends Component
 {
@@ -31,6 +33,11 @@ class LecturesPage extends Component
     public $delete_id = null;
     public $showViewModal = false;
     public $viewedLecture = null;
+    public $showQrModal = false;
+    public $qrCodeImage = '';
+    public $qrLectureTitle = '';
+    public $qrLectureCourse = '';
+    public $qrLectureDoctor = '';
 
     // --- خصائص البحث والفلاتر ---
     public $search = '';
@@ -142,7 +149,7 @@ class LecturesPage extends Component
     public function viewLecture($id)
     {
         try {
-            $this->viewedLecture = Lecture::with(['course', 'doctor', 'files'])->findOrFail($id);
+            $this->viewedLecture = Lecture::with(['course', 'doctor', 'files', 'attendances.student.user'])->findOrFail($id);
             $this->showViewModal = true;
         } catch (\Exception $e) {
             Log::error('Error viewing lecture: ' . $e->getMessage());
@@ -155,6 +162,55 @@ class LecturesPage extends Component
     public function openForm() { $this->resetForm(); $this->showForm = true; }
     public function closeForm() { $this->showForm = false; $this->resetForm(); }
     public function closeViewModal() { $this->showViewModal = false; $this->viewedLecture = null; }
+
+    public function generateQrCode($lectureId)
+    {
+        try {
+            $lecture = Lecture::with(['course', 'doctor'])->findOrFail($lectureId);
+            
+            // Ensure the doctor owns this lecture
+            if ($lecture->doctor_id !== Auth::user()->doctor->id) {
+                $this->dispatch('showToast', message: 'غير مصرح لك بإنشاء رمز لهذه المحاضرة.', type: 'error');
+                return;
+            }
+
+            $this->qrLectureTitle = $lecture->title;
+            $this->qrLectureCourse = $lecture->course->name ?? '';
+            $this->qrLectureDoctor = $lecture->doctor->name ?? '';
+            
+            // Generate a signed URL that is valid for 2 hours
+            $url = URL::temporarySignedRoute(
+                'attendance.mark',
+                now()->addHours(2),
+                ['lecture' => $lectureId]
+            );
+
+            // Generate QR Code as SVG and encode to Base64
+            $qrCode = QrCode::format('svg')
+                ->size(300)
+                ->color(79, 70, 229)
+                ->backgroundColor(255, 255, 255)
+                ->margin(2)
+                ->generate($url);
+            
+            // Convert to Base64 Data URI
+            $this->qrCodeImage = 'data:image/svg+xml;base64,' . base64_encode($qrCode);
+
+            $this->showQrModal = true;
+        } catch (\Exception $e) {
+            Log::error('Error generating QR code: ' . $e->getMessage());
+            $this->dispatch('showToast', message: 'حدث خطأ أثناء توليد رمز QR.', type: 'error');
+        }
+    }
+
+    public function closeQrModal()
+    {
+        $this->showQrModal = false;
+        $this->qrCodeImage = '';
+        $this->qrLectureTitle = '';
+        $this->qrLectureCourse = '';
+        $this->qrLectureDoctor = '';
+    }
     public function addNewFile() { $this->new_files[] = null; $this->file_types[] = null; $this->file_descriptions[] = null; }
     public function removeNewFile($index) { unset($this->new_files[$index], $this->file_types[$index], $this->file_descriptions[$index]); }
     public function markFileForDeletion($fileId) { $this->files_to_delete[] = $fileId; $this->existing_files = array_filter($this->existing_files, fn($file) => $file['id'] != $fileId); }

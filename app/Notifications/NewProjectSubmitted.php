@@ -3,10 +3,10 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Project; // 💡 استيراد موديل المشروع
+use Kreait\Firebase\Messaging\CloudMessage;
+use App\Models\Project;
+use App\Notifications\Channels\FcmChannel; // 📌 قناة FCM مخصصة
 
 class NewProjectSubmitted extends Notification
 {
@@ -27,11 +27,11 @@ class NewProjectSubmitted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class]; // قاعدة البيانات + FCM
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the array representation of the notification for DB.
      */
     public function toArray(object $notifiable): array
     {
@@ -43,9 +43,27 @@ class NewProjectSubmitted extends Notification
             'student_name' => $studentName,
             'project_title' => $projectTitle,
             'message' => "قام الطالب '{$studentName}' بتقديم مشروع جديد بعنوان '{$projectTitle}' لإشرافك.",
-            // 💡 هذا الرابط سيوجه الدكتور مباشرة لصفحة المشاريع الخاصة به
             'url' => route('doctor.projects'),
-            'icon' => 'bi-folder-plus' // أيقونة مناسبة للمشاريع الجديدة
+            'icon' => 'bi-folder-plus'
         ];
+    }
+
+    /**
+     * Prepare the FCM notification.
+     */
+    public function toFcm(object $notifiable): CloudMessage
+    {
+        $studentName = $this->project->creatorStudent->name ?? 'طالب';
+        $projectTitle = $this->project->title;
+
+        return CloudMessage::withTarget('token', $notifiable->fcm_token)
+            ->withNotification([
+                'title' => 'تم تقديم مشروع جديد',
+                'body' => "قام الطالب '{$studentName}' بتقديم مشروع '{$projectTitle}' لإشرافك.",
+            ])
+            ->withData([
+                'type' => 'new_project_submitted',
+                'project_id' => (string) $this->project->id,
+            ]);
     }
 }

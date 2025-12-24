@@ -23,6 +23,7 @@ use App\Livewire\Admin\SpecializationsPage;
 use App\Livewire\Admin\StudentsPage;
 use App\Livewire\Admin\SubmissionsPage as AdminSubmissionsPage;
 use App\Livewire\Admin\UsersManagement;
+use App\Livewire\Admin\BackupPage;
 
 // استيراد مكونات لوحة تحكم الدكتور (Doctor)
 use App\Livewire\Doctor\DoctorDashboard;
@@ -56,6 +57,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/join/{batch}', App\Livewire\Auth\JoinBatch::class)->name('join.batch');
+
 Route::view('/contact', 'contact')->name('contact');
 
 // --- مسارات المدير (Admin) ---
@@ -78,6 +81,7 @@ Route::middleware(['auth', 'role:admin', 'verified', 'throttle:20,1'])->prefix('
     Route::get('locations', LocationsPage::class)->name('locations');
     Route::get('/reports', ReportCenter::class)->name('reports.center');
     Route::get('reports/attendance', AttendanceReportPage::class)->name('reports.attendance');
+    Route::get('/backup', BackupPage::class)->name('backup');
     Volt::route('/announcements', 'admin.announcements-page')->name('announcements');
 });
 
@@ -87,6 +91,7 @@ Route::middleware(['auth', 'role:doctor', 'verified', 'throttle:20,1'])->prefix(
     Route::get('assignments', DoctorAssignmentsPage::class)->name('assignments');
     Route::get('/projects', DoctorProjectsPage::class)->name('projects');
     Route::get('/lectures', DoctorLecturesPage::class)->name('lectures');
+    Route::get('/lectures/{lectureId}/qr-code', \App\Livewire\Doctor\LectureQrCode::class)->name('lectures.qr'); // ✅ مسار QR Code
     Route::get('/my-courses', DoctorMyCoursesPage::class)->name('courses.index');
     Route::get('/courses/{course}/discussions', DoctorCourseDiscussionsPage::class)->name('courses.discussions');
     Route::get('my-schedule', DoctorMySchedulePage::class)->name('my-schedule');
@@ -106,6 +111,11 @@ Route::middleware(['auth', 'role:student', 'verified', 'throttle:20,1'])->prefix
     Route::get('/my-attendance', MyAttendancePage::class)->name('attendance');
     Route::get('/profile', ProfilePage::class)->name('profile');
 });
+
+// --- مسار تسجيل الحضور (QR Code) ---
+Route::middleware(['auth', 'role:student'])->get('/attendance/mark/{lecture}', [App\Http\Controllers\AttendanceController::class, 'mark'])
+    ->name('attendance.mark')
+    ->middleware('signed');
 
 // --- مسارات الإعدادات العامة والمصادقة ---
 Route::middleware(['auth'])->group(function () {

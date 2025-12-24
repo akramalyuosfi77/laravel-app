@@ -1,0 +1,109 @@
+/* Animation Durations & Easings */
+:root {
+    --anim-duration-fast: 0.4s;
+    --anim-duration-normal: 0.8s;
+    --anim-duration-slow: 1.2s;
+    --anim-ease-out: cubic-bezier(0.5, 0, 0, 1);
+    --anim-ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Base Animation Class */
+[class*="anim-"] {
+    opacity: 0;
+    transition: opacity var(--anim-duration-normal) var(--anim-ease-out),
+        transform var(--anim-duration-normal) var(--anim-ease-out);
+    will-change: opacity, transform;
+}
+
+/* Fade In */
+.anim-fade-in {
+    transform: translateY(20px);
+}
+
+/* Slide Up */
+.anim-slide-up {
+    transform: translateY(50px);
+}
+
+/* Slide Left */
+.anim-slide-left {
+    transform: translateX(-50px);
+}
+
+/* Slide Right */
+.anim-slide-right {
+    transform: translateX(50px);
+}
+
+/* Zoom In */
+.anim-zoom {
+    transform: scale(0.8);
+}
+
+/* Active State (triggered by JS) */
+.anim-visible {
+    opacity: 1 !important;
+    transform: translate(0) scale(1) !important;
+}
+
+/* Staggered Delays */
+.anim-delay-100 {
+    transition-delay: 0.1s;
+}
+
+.anim-delay-200 {
+    transition-delay: 0.2s;
+}
+
+.anim-delay-300 {
+    transition-delay: 0.3s;
+}
+
+.anim-delay-400 {
+    transition-delay: 0.4s;
+}
+
+.anim-delay-500 {
+    transition-delay: 0.5s;
+}
+
+/* Hover Effects */
+.anim-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.anim-hover:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Underline Animation */
+.anim-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.anim-underline::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--brand-primary, #3498db);
+    transition: width 0.4s ease;
+}
+
+.anim-underline:hover::after,
+.anim-underline.anim-visible::after {
+    width: 100%;
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    [class*="anim-"] {
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
