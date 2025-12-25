@@ -157,6 +157,128 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <p class="text-slate-600 dark:text-slate-400">أدخل بياناتك لإنشاء حسابك الطلابي</p>
             </div>
 
+            {{-- New: Fast Scan QR Logic (Mobile First) --}}
+            <div x-data="{ 
+                scanning: false, 
+                html5QrCode: null,
+                startScanner() {
+                    this.scanning = true;
+                    this.$nextTick(() => {
+                        this.html5QrCode = new Html5Qrcode('qr-reader');
+                        const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+                        
+                        this.html5QrCode.start(
+                            { facingMode: 'environment' }, 
+                            config, 
+                            (decodedText) => {
+                                if(decodedText.includes('/join/')) {
+                                    this.stopScanner();
+                                    window.location.href = decodedText;
+                                }
+                            }
+                        ).catch(err => {
+                            console.error('Camera start error:', err);
+                            alert('لم نتمكن من فتح الكاميرا، تأكد من إعطاء الصلاحية');
+                            this.scanning = false;
+                        });
+                    });
+                },
+                stopScanner() {
+                    if(this.html5QrCode) {
+                        this.html5QrCode.stop().then(() => {
+                            this.scanning = false;
+                        }).catch(err => {
+                            console.error('Stop error:', err);
+                            this.scanning = false;
+                        });
+                    } else {
+                        this.scanning = false;
+                    }
+                }
+            }" class="mb-8">
+                {{-- The Clickable Prompt --}}
+                <div 
+                    @click="startScanner()"
+                    class="p-5 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center gap-4 group transition-all hover:shadow-2xl cursor-pointer hover:scale-[1.03] active:scale-95 shadow-lg relative overflow-hidden"
+                >
+                    {{-- Decorative background animation --}}
+                    <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity animate-pulse"></div>
+
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:rotate-12 transition-transform shadow-inner">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 17h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 text-right">
+                        <h3 class="font-bold text-white text-lg">دخول المندوب السريع</h3>
+                        <p class="text-xs text-blue-100 italic">اضغط هنا لفتح الكاميرا ومسح الكود</p>
+                    </div>
+                    <div class="text-white/80">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- Full Screen Camera Overlay --}}
+                <template x-if="scanning">
+                    <div class="fixed inset-0 z-[100] flex flex-col bg-black">
+                        {{-- Scanner Header --}}
+                        <div class="p-6 flex items-center justify-between text-white bg-black/50 backdrop-blur-md relative z-10">
+                            <button @click="stopScanner()" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                            <h3 class="font-bold">مسح كود الانضمام</h3>
+                            <div class="w-6"></div> {{-- Spacer --}}
+                        </div>
+                        
+                        {{-- Camera Container --}}
+                        <div class="flex-1 relative flex items-center justify-center overflow-hidden">
+                            <div id="qr-reader" class="w-full h-full object-cover"></div>
+                            
+                            {{-- Scanning UI Overlay --}}
+                            <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                <div class="w-64 h-64 border-2 border-blue-500 rounded-3xl relative">
+                                    <div class="absolute inset-0 border-4 border-white/20 rounded-3xl animate-pulse"></div>
+                                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 rounded-tl-xl"></div>
+                                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-500 rounded-tr-xl"></div>
+                                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-500 rounded-tl-xl rotate-180 origin-center" style="transform: rotate(180deg); bottom: -4px; right: -4px;"></div> {{-- Simplified corners --}}
+                                    
+                                    <style>
+                                        @keyframes scanLine {
+                                            0% { top: 0; }
+                                            100% { top: 100%; }
+                                        }
+                                        .scan-line {
+                                            position: absolute;
+                                            left: 0;
+                                            right: 0;
+                                            height: 2px;
+                                            background: #3b82f6;
+                                            box-shadow: 0 0 15px #3b82f6;
+                                            animation: scanLine 2s linear infinite;
+                                        }
+                                    </style>
+                                    <div class="scan-line"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Footer Info --}}
+                        <div class="p-8 bg-black/50 text-center text-white/70">
+                            <p class="text-sm">وجه الكاميرا نحو المربع لمسح الكود</p>
+                            <div class="mt-4 flex items-center justify-center gap-2">
+                                <span class="flex h-2 w-2 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                <span class="text-xs">جاري البحث عن كود الدفعة...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
             {{-- Register Form --}}
             <form wire:submit="register" class="space-y-4">
                 {{-- Name Input --}}
@@ -319,6 +441,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
 </div>
 
 @push('scripts')
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 @endpush
-

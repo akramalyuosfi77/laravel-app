@@ -112,10 +112,22 @@ Route::middleware(['auth', 'role:student', 'verified', 'throttle:20,1'])->prefix
     Route::get('/profile', ProfilePage::class)->name('profile');
 });
 
+
+
+
+
 // --- مسار تسجيل الحضور (QR Code) ---
 Route::middleware(['auth', 'role:student'])->get('/attendance/mark/{lecture}', [App\Http\Controllers\AttendanceController::class, 'mark'])
     ->name('attendance.mark')
     ->middleware('signed');
+
+
+
+// --- مسارات تسجيل الدخول عبر جوجل ---
+Route::get('/auth/google/redirect', [App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+
 
 // --- مسارات الإعدادات العامة والمصادقة ---
 Route::middleware(['auth'])->group(function () {

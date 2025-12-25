@@ -20,4 +20,7 @@ auth.json
 /.nova
 /.vscode
 /.zed
-/public/build
+
+.env
+.env.backup
+.env.production
