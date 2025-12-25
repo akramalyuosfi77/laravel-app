@@ -149,11 +149,11 @@
                     <div x-data="{ isUserMenuOpen: false }" class="relative">
                         <button @click="isUserMenuOpen = !isUserMenuOpen" class="w-full flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-700/50 dark:to-zinc-800/50 hover:from-zinc-100 hover:to-zinc-200 dark:hover:from-zinc-600 dark:hover:to-zinc-700 transition-all">
                             <div class="w-10 h-10 bg-gradient-to-br from-accent to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                                {{ auth()->user()->initials() }}
+                                {{ auth()->user()?->initials() }}
                             </div>
                             <div class="flex-1 min-w-0 text-right">
-                                <p class="font-bold text-zinc-900 dark:text-white truncate" style="font-family: 'Questv1', sans-serif;">{{ auth()->user()->name }}</p>
-                                <p class="text-sm text-zinc-500 dark:text-zinc-400 truncate">{{ auth()->user()->email }}</p>
+                                <p class="font-bold text-zinc-900 dark:text-white truncate" style="font-family: 'Questv1', sans-serif;">{{ auth()->user()?->name }}</p>
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400 truncate">{{ auth()->user()?->email }}</p>
                             </div>
                             <svg class="w-5 h-5 text-zinc-400 transition-transform" :class="{'rotate-180': isUserMenuOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
