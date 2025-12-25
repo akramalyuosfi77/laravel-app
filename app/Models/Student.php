@@ -80,16 +80,17 @@ class Student extends Model
     public function getCurrentCourses()
     {
         // إذا لم يكن للطالب دفعة أو تخصص، نرجع استعلاماً فارغاً لتجنب الأخطاء
-        if (!$this->batch?->specialization_id) {
-            return Course::query()->whereRaw('1 = 0'); // استعلام فارغ آمن
+        if (!$this->batch_id) {
+            return Course::query()->whereRaw('1 = 0');
         }
 
-        // بناء الاستعلام الصحيح الذي يمر عبر الدفعة والتخصص
+        // استخدام نفس منطق المدير (Join) لضمان أعلى معايير الجودة والتطابق
+        // نقوم بربط جدول المواد بالجدول الوسيط الذي يحتوي على الخطة الدراسية
         return Course::query()
-            ->whereHas('specializations', function ($query) {
-                $query->where('specializations.id', $this->batch->specialization_id)
-                      ->where('specialization_course_academic_period.academic_year', $this->current_academic_year)
-                      ->where('specialization_course_academic_period.semester', $this->current_semester);
-            });
+            ->join('specialization_course_academic_period as scap', 'courses.id', '=', 'scap.course_id')
+            ->where('scap.specialization_id', $this->batch->specialization_id)
+            ->where('scap.academic_year', $this->current_academic_year)
+            ->where('scap.semester', $this->current_semester)
+            ->select('courses.*'); // نختار بيانات مادة الكورس فقط
     }
 }
