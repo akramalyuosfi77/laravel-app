@@ -1,16 +1,36 @@
 {
+  "public/fonts/DroidKufi.ttf": {
+    "file": "assets/DroidKufi-BvxQDhJP.ttf",
+    "src": "public/fonts/DroidKufi.ttf"
+  },
+  "public/fonts/IBMPlexArabic-Text.ttf": {
+    "file": "assets/IBMPlexArabic-Text-DzkITPN5.ttf",
+    "src": "public/fonts/IBMPlexArabic-Text.ttf"
+  },
+  "public/fonts/Montserrat-Arabic-Regular.ttf": {
+    "file": "assets/Montserrat-Arabic-Regular-B1HR3uJL.ttf",
+    "src": "public/fonts/Montserrat-Arabic-Regular.ttf"
+  },
+  "public/fonts/Questv1-Bold.otf": {
+    "file": "assets/Questv1-Bold-CPRvWKzL.otf",
+    "src": "public/fonts/Questv1-Bold.otf"
+  },
+  "public/fonts/alfont_com_NeoSansArabic.ttf": {
+    "file": "assets/alfont_com_NeoSansArabic-D-qJ0TBE.ttf",
+    "src": "public/fonts/alfont_com_NeoSansArabic.ttf"
+  },
   "resources/css/animations.css": {
     "file": "assets/animations-Cqu36Zao.css",
     "src": "resources/css/animations.css",
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-C3CU64O4.css",
+    "file": "assets/app-Ci5AT4EA.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/welcome.css": {
-    "file": "assets/welcome-C7Nma8MU.css",
+    "file": "assets/welcome-oy4HVh-W.css",
     "src": "resources/css/welcome.css",
     "isEntry": true
   },
