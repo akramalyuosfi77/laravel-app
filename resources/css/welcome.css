@@ -1,7 +1,7 @@
 /* === [0] تعريف الخطوط (Fonts) === */
 @font-face {
     font-family: 'NeoSansArabic';
-    src: url('/fonts/alfont_com_NeoSansArabic.ttf') format('truetype');
+    src: url('../../public/fonts/alfont_com_NeoSansArabic.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -9,7 +9,7 @@
 
 @font-face {
     font-family: 'DroidKufi';
-    src: url('/fonts/DroidKufi.ttf') format('truetype');
+    src: url('../../public/fonts/DroidKufi.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -17,7 +17,7 @@
 
 @font-face {
     font-family: 'IBMPlexArabic';
-    src: url('/fonts/IBMPlexArabic-Text.ttf') format('truetype');
+    src: url('../../public/fonts/IBMPlexArabic-Text.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -25,7 +25,7 @@
 
 @font-face {
     font-family: 'MontserratArabic';
-    src: url('/fonts/Montserrat-Arabic-Regular.ttf') format('truetype');
+    src: url('../../public/fonts/Montserrat-Arabic-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -33,7 +33,7 @@
 
 @font-face {
     font-family: 'Questv1';
-    src: url('/fonts/Questv1-Bold.otf') format('opentype');
+    src: url('../../public/fonts/Questv1-Bold.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
