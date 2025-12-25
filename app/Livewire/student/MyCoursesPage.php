@@ -17,7 +17,7 @@ class MyCoursesPage extends Component
     // ... داخل كلاس MyCoursesPage ...
 // ... داخل كلاس MyCoursesPage ...
 
-#[Computed(cache: true)]
+#[Computed]
 public function courses()
 {
     try {

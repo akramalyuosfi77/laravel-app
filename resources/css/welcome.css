@@ -126,6 +126,12 @@ section {
 }
 
 /* === [3] حركة ظهور العناصر عند التمرير === */
+section {
+    position: relative;
+    z-index: 1;
+    /* التأكد من أن الأقسام تأخذ مستوى منخفض */
+}
+
 .reveal,
 .reveal-left,
 .reveal-right,
@@ -194,23 +200,71 @@ section {
     }
 }
 
-/* Header Fixes */
+/* === [4] رأس الصفحة (Header & Navigation) === */
 .header {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    z-index: 10000;
-    background-color: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    right: 0;
+    z-index: 2000000 !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 15px 0;
+    /* تقليل البادينج قليلاً ليكون أنسب للجوال */
+    background: transparent;
 }
+
+@media (min-width: 993px) {
+    .header {
+        padding: 20px 0;
+        /* إعادة البادينج الأكبر للكمبيوتر فقط */
+    }
+}
+
+.header.scrolled {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    padding: 12px 0;
+}
+
 
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px;
+    gap: 20px;
+}
+
+/* التنسيق للكمبيوتر: تنظيم العناصر في أعمدة */
+@media (min-width: 993px) {
+    .nav-container {
+        display: grid;
+        grid-template-columns: 200px 1fr 200px;
+        /* تقليص مساحة الشعار والزر لإعطاء مساحة أكبر للقائمة */
+        align-items: center;
+        max-width: 1400px;
+        /* توسيع الحاوية قليلاً للشاشات الكبيرة */
+    }
+
+    .nav-menu {
+        justify-self: center;
+        /* توسيط القائمة في المنتصف تماماً */
+    }
+
+    .nav-actions {
+        justify-self: end;
+        /* الزر على اليسار في وضع RTL */
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo {
+        justify-self: start;
+        /* الشعار على اليمين في وضع RTL */
+    }
 }
 
 .logo {
@@ -222,6 +276,14 @@ section {
     color: var(--brand-primary);
     text-decoration: none;
     transition: var(--transition-smooth);
+    position: relative;
+    z-index: 2200;
+    /* لضمان بقائه فوق القائمة */
+}
+
+.logo lottie-player {
+    pointer-events: none;
+    /* منع الأنميشن من اعتراض النقرات على الشعار */
 }
 
 .logo:hover {
@@ -233,43 +295,87 @@ section {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 10px;
+    gap: 12px;
+    /* فجوة مناسبة بين الأزرار */
+    padding: 0;
+    background: none;
+    /* إزالة الخلفية الموحدة */
+    border: none;
 }
 
 .nav-menu a {
     text-decoration: none;
-    color: var(--text-secondary);
+    color: white;
+    /* جعل النص أبيض ناصع للفخامة */
     font-family: var(--font-headings);
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 20px;
-    transition: var(--transition-smooth);
+    font-weight: 700;
+    padding: 10px 22px;
+    /* زيادة البادينج الجانبي ليشبه الزر أكثر */
+    border-radius: 14px;
+    /* زوايا منحنية أنيقة */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.08);
+    /* خلفية "زجاجية" أوضح */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* حدود ناعمة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-menu a:hover {
-    color: var(--brand-primary);
-    background-color: rgba(52, 152, 219, 0.07);
+    background: var(--brand-primary);
+    /* تغيير اللون عند المرور كما في زر الدخول */
+    border-color: var(--brand-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+.nav-menu a.active {
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: white;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+@media (max-width: 1200px) {
+    .nav-menu a {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
 }
 
 .login-btn {
     background: var(--gradient-brand);
     color: white;
-    padding: 10px 25px;
+    padding: 12px 28px;
     border-radius: 50px;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: var(--shadow-brand);
-    transition: var(--transition-smooth);
-    border: none;
+    gap: 10px;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
 }
 
 .login-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 30px rgba(52, 152, 219, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(99, 102, 241, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .mobile-menu-btn,
@@ -861,9 +967,34 @@ section {
 
 @media (max-width: 992px) {
 
-    .nav-menu,
-    .login-btn {
+    .nav-menu {
         display: none;
+    }
+
+    .login-btn {
+        padding: 8px 15px;
+        /* تصغير البادينج قليلاً في الجوال */
+        font-size: 0.9rem;
+    }
+
+    /* إخفاء النص فقط في الشريط العلوي للشاشات المتوسطة والصغيرة */
+    @media (max-width: 992px) {
+        .nav-container .login-btn span {
+            display: none;
+        }
+
+        .nav-container .login-btn {
+            padding: 12px;
+            width: 45px;
+            height: 45px;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .nav-container .login-btn i {
+            margin: 0;
+            font-size: 1.3rem;
+        }
     }
 
     .mobile-menu-btn {
@@ -873,54 +1004,161 @@ section {
         font-size: 1.8rem;
         color: var(--brand-primary);
         cursor: pointer;
+        z-index: 2200;
+        /* التأكد أنه فوق كل شيء */
+        position: relative;
+    }
+
+    .header {
+        z-index: 2000000 !important;
     }
 
     .mobile-menu {
-        display: block;
-        position: absolute;
-        top: 80px;
-        left: 0;
-        right: 0;
-        background-color: #0f172a !important;
-        /* Force solid background */
-        border-bottom: 2px solid var(--brand-primary);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease-in-out;
-        z-index: 20000;
+        display: flex !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background: #0f172a !important;
+        /* تأكيد اللون القاتم تماماً */
+        z-index: 1000000 !important;
+        /* أقل من الهيدر بقليل */
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        /* المحاذاة لليمين في وضع RTL */
+        overflow-y: auto;
+        padding: 100px 30px;
+        /* مساحة جانبية لتبدو الأزرار مرتبة */
     }
 
-
     .mobile-menu.active {
-        max-height: 100vh;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
     }
 
     .mobile-menu ul {
         list-style: none;
-        padding: 20px;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .mobile-menu ul li {
+        margin: 6px 0;
+        width: 100%;
+        text-align: right;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.4s ease;
+    }
+
+    .mobile-menu.active ul li {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* أضف تأخير متتابع للفخامة */
+    .mobile-menu.active ul li:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+
+    .mobile-menu.active ul li:nth-child(2) {
+        transition-delay: 0.15s;
+    }
+
+    .mobile-menu.active ul li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .mobile-menu.active ul li:nth-child(4) {
+        transition-delay: 0.25s;
+    }
+
+    .mobile-menu.active ul li:nth-child(5) {
+        transition-delay: 0.3s;
+    }
+
+    .mobile-menu.active ul li:nth-child(6) {
+        transition-delay: 0.35s;
+    }
+
+    .mobile-menu.active ul li:nth-child(7) {
+        transition-delay: 0.45s;
+    }
+
+    .mobile-menu.active ul li:nth-child(8) {
+        transition-delay: 0.5s;
+    }
+
+    .mobile-menu.active ul li:nth-child(9) {
+        transition-delay: 0.55s;
+    }
+
+    .mobile-menu.active ul li:nth-child(10) {
+        transition-delay: 0.6s;
     }
 
     .mobile-menu ul li a {
-        display: block;
-        padding: 15px;
-        color: var(--text-dark);
-        font-weight: 600;
-        border-radius: 8px;
-        transition: var(--transition-smooth);
+        display: flex;
+        padding: 10px 20px;
+        color: white !important;
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        width: auto;
+        min-width: 200px;
+        max-width: 280px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        justify-content: flex-start;
+        margin: 0;
     }
 
     .mobile-menu ul li a:hover {
-        background: rgba(52, 152, 219, 0.07);
-        color: var(--brand-primary);
-        transform: translateX(-10px);
+        background: var(--brand-primary);
+        border-color: var(--brand-primary);
+        transform: scale(1.05);
+    }
+
+    .mobile-menu ul li a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background: var(--brand-primary);
+        transition: var(--transition-smooth);
+    }
+
+    .mobile-menu ul li a:hover::after {
+        width: 50%;
     }
 
     .mobile-menu .login-btn {
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        margin-top: 10px;
+        margin-top: 20px;
+        font-size: 1rem;
+        padding: 12px 35px;
+        border-radius: 50px;
+        align-self: flex-start;
+        /* محاذاة زر الدخول لليمين أيضاً */
+        margin-right: 0;
     }
 
     .contact-grid-layout {

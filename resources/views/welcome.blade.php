@@ -14,14 +14,6 @@
         ['href' => '#login-options', 'label' => 'خيارات الدخول'],
         ['href' => '#statistics', 'label' => 'إحصائيات'],
     ];
-
-    $dashboardRoute = route('login');
-    if(auth()->check()) {
-        $role = auth()->user()->role;
-        if($role === 'admin') $dashboardRoute = route('admin.dashboard');
-        elseif($role === 'doctor') $dashboardRoute = route('doctor.dashboard');
-        elseif($role === 'student') $dashboardRoute = route('student.dashboard');
-    }
     $loginOptions = [
         [
             'icon' => 'fas fa-user-graduate',
@@ -151,38 +143,32 @@
         ['icon' => 'fab fa-linkedin-in', 'title' => 'LinkedIn', 'url' => '#'],
         ['icon' => 'fab fa-youtube', 'title' => 'YouTube', 'url' => '#'],
     ];
+
+    $dashboardRoute = '#';
+    if (auth()->check()) {
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            $dashboardRoute = route('admin.dashboard');
+        } elseif ($user->isDoctor()) {
+            $dashboardRoute = route('doctor.dashboard');
+        } elseif ($user->isStudent()) {
+            $dashboardRoute = route('student.dashboard');
+        }
+    }
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نورس | منصة التعليم الجامعي الإلكترونية</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="نورس - منصة تعليمية إلكترونية متكاملة لإدارة العملية التعليمية الجامعية. نظام شامل للطلاب والمحاضرين والإدارة مع واجهة سهلة الاستخدام.">
-    <meta name="keywords" content="نورس, منصة تعليمية, تعليم إلكتروني, جامعة الحضارة, نظام إدارة التعليم, LMS, منصة جامعية, تعليم عن بعد">
-    <meta name="author" content="Nooris Educational Platform">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph Meta Tags for Social Media -->
-    <meta property="og:title" content="نورس | منصة التعليم الجامعي الإلكترونية">
-    <meta property="og:description" content="منصة تعليمية متكاملة لإدارة العملية التعليمية بكفاءة وسهولة">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nooris.me">
-    <meta property="og:site_name" content="نورس">
-    
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="نورس | منصة التعليم الجامعي الإلكترونية">
-    <meta name="twitter:description" content="منصة تعليمية متكاملة لإدارة العملية التعليمية">
+    <title>جامعة الحضارة | صرحك نحو المستقبل</title>
 
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#3498db">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="نورس">
+    <meta name="apple-mobile-web-app-title" content="المنصة الجامعية">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
 
     <!-- Google Fonts -->
@@ -192,7 +178,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Lottie Player -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    @vite(['resources/css/welcome.css', 'resources/js/welcome.js', 'resources/js/animations.js'])
+    @vite(['resources/css/welcome.css', 'resources/css/animations.css', 'resources/js/welcome.js', 'resources/js/animations.js'])
     @livewireStyles
 </head>
 <body>
@@ -211,47 +197,22 @@
                     @endforeach
                 </ul>
             </nav>
-            <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="nav-actions">
                 @auth
                     <a href="{{ $dashboardRoute }}" class="login-btn">
-                        <i class="fas fa-tachometer-alt"></i>
-                        لوحة التحكم
+                        <i class="fas fa-th-large"></i>
+                        <span>لوحة التحكم</span>
                     </a>
                 @else
                     <a href="{{ $loginRoute }}" class="login-btn">
                         <i class="fas fa-sign-in-alt"></i>
-                        دخول
+                        <span>دخول</span>
                     </a>
                 @endauth
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
-        </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <ul>
-                @foreach($navLinks as $link)
-                    <li><a href="{{ $link['href'] }}">{{ $link['label'] }}</a></li>
-                @endforeach
-                @foreach($mobileExtraLinks as $link)
-                    <li><a href="{{ $link['href'] }}">{{ $link['label'] }}</a></li>
-                @endforeach
-                @auth
-                    <li>
-                        <a href="{{ $dashboardRoute }}" class="login-btn" style="text-align: center; justify-content: center;">
-                            <i class="fas fa-tachometer-alt" style="margin-left: 8px;"></i>
-                            لوحة التحكم
-                        </a>
-                    </li>
-                @else
-                    <li>
-                        <a href="{{ $loginRoute }}" class="login-btn" style="text-align: center; justify-content: center;">
-                            <i class="fas fa-sign-in-alt" style="margin-left: 8px;"></i>
-                            دخول
-                        </a>
-                    </li>
-                @endauth
-            </ul>
         </div>
     </header>
 
@@ -274,15 +235,15 @@
         <!-- قسم خيارات الدخول -->
         <section id="login-options" class="section" style="background-color: var(--bg-soft);">
             <div class="container">
-                <x-section-title title="بوابتك الرقمية" subtitle="اختر دورك للوصول إلى الخدمات المخصصة لك في نورس." />
+                <x-section-title title="بوابتك الرقمية" subtitle="اختر دورك للوصول إلى الخدمات المخصصة لك في المنصة الجامعية المتكاملة." />
                 <div class="default-grid">
                     @foreach($loginOptions as $loop_index => $option)
                         <x-card 
                             :icon="$option['icon']" 
                             :title="$option['title']" 
                             :description="$option['description']" 
-                            :cta="auth()->check() ? 'الذهاب للوحة التحكم' : $option['cta']" 
-                            :ctaLink="$dashboardRoute"
+                            :cta="$option['cta']" 
+                            :ctaLink="$loginRoute"
                             :delay="$loop_index * 100"
                         />
                     @endforeach
@@ -507,6 +468,22 @@
     @livewireScripts
 
 
+
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            @foreach($navLinks as $link)
+                <li><a href="{{ $link['href'] }}">{{ $link['label'] }}</a></li>
+            @endforeach
+            @foreach($mobileExtraLinks as $link)
+                <li><a href="{{ $link['href'] }}">{{ $link['label'] }}</a></li>
+            @endforeach
+            @auth
+                <li><a href="{{ $dashboardRoute }}" class="login-btn">لوحة التحكم</a></li>
+            @else
+                <li><a href="{{ $loginRoute }}" class="login-btn">دخول</a></li>
+            @endauth
+        </ul>
+    </div>
 
     <script>
         if ('serviceWorker' in navigator) {

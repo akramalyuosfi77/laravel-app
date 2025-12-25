@@ -101,4 +101,33 @@ class Batch extends Model
             return 'حالة غير معروفة';
         }
     }
+
+    /**
+     * ✅✅✅ [أعلى معايير الجودة - تزامن الدفعة والطلاب] ✅✅✅
+     * يتم استدعاء هذا الجزء عند تشغيل الموديل.
+     */
+    protected static function booted()
+    {
+        static::updated(function ($batch) {
+            // التحقق مما إذا كانت السنة الدراسية أو الترم قد تغيرا في الدفعة
+            // نتحقق من كلا الحقلين (academic_year و semester) لضمان العمل مع أي منهما
+            if ($batch->wasChanged(['academic_year', 'semester', 'current_academic_year', 'current_semester'])) {
+                
+                // جلب القيم الجديدة (دعم الحقول المتعددة)
+                $newYear = $batch->academic_year ?? $batch->current_academic_year;
+                $newSemester = $batch->semester ?? $batch->current_semester;
+
+                if ($newYear && $newSemester) {
+                    // تحديث جميع الطلاب السجلين في هذه الدفعة دفعة واحدة (Mass Update) لضمان الأداء العالي
+                    $batch->students()->update([
+                        'current_academic_year' => $newYear,
+                        'current_semester' => $newSemester,
+                    ]);
+
+                    // تسجيل العملية في السجلات للتأكد من المتابعة
+                    \Illuminate\Support\Facades\Log::info("Auto-Sync: Students in batch '{$batch->name}' promoted to Year {$newYear} Sem {$newSemester}");
+                }
+            }
+        });
+    }
 }
