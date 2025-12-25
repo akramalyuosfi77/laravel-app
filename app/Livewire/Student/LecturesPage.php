@@ -18,7 +18,8 @@ class LecturesPage extends Component
     public $search = '';
     public $filter_course_id = '';
 
-    // --- خصائص الواجهة ---
+    // --- خصائص الاختيار ---
+    public $selected_course_id = null;
     public $showViewModal = false;
     public $viewedLecture = null;
 
@@ -78,11 +79,31 @@ public function studentCourses()
     }
 
     /**
+     * اختيار مادة معينة لعرض محاضراتها.
+     */
+    public function selectCourse($id)
+    {
+        $this->selected_course_id = $id;
+        $this->filter_course_id = $id;
+        $this->resetPage();
+    }
+
+    /**
+     * العودة لقائمة المواد.
+     */
+    public function resetSelection()
+    {
+        $this->selected_course_id = null;
+        $this->filter_course_id = '';
+        $this->resetPage();
+    }
+
+    /**
      * إعادة تعيين الترقيم عند تغيير الفلاتر.
      */
     public function updating($property)
     {
-        if (in_array($property, ['search', 'filter_course_id'])) {
+        if (in_array($property, ['search', 'filter_course_id', 'selected_course_id'])) {
             $this->resetPage();
         }
     }
@@ -93,17 +114,33 @@ public function studentCourses()
     {
         $student = Auth::user()->student;
         if (!$student) {
-            return view('livewire.student.lectures-page', ['lectures' => collect()]);
+            return view('livewire.student.lectures-page', [
+                'lectures' => collect(),
+                'courses' => collect()
+            ]);
         }
 
-        // جلب المحاضرات المرتبطة بالمواد التي يدرسها الطالب
+        $courses = $this->studentCourses;
+
+        // إذا لم يتم اختيار مادة، نعرض المواد أولاً
+        if (!$this->selected_course_id && !$this->search) {
+            return view('livewire.student.lectures-page', [
+                'courses' => $courses,
+                'lectures' => collect()
+            ]);
+        }
+
+        // جلب المحاضرات المرتبطة بالمواد التي يدرسها الطالب بالترتيب
         $lectures = Lecture::with(['course', 'doctor'])
             ->whereIn('course_id', $this->studentCourses()->pluck('id'))
             ->when($this->search, fn($q) => $q->where('title', 'like', '%' . $this->search . '%')->orWhere('description', 'like', '%' . $this->search . '%'))
-            ->when($this->filter_course_id, fn($q) => $q->where('course_id', $this->filter_course_id))
-            ->latest()
-            ->paginate(10);
+            ->when($this->selected_course_id, fn($q) => $q->where('course_id', $this->selected_course_id))
+            ->orderBy('lecture_date', 'asc') // ترتيب تصاعدي حسب التاريخ (الأولى فالثانية...)
+            ->paginate(12);
 
-        return view('livewire.student.lectures-page', ['lectures' => $lectures]);
+        return view('livewire.student.lectures-page', [
+            'lectures' => $lectures,
+            'courses' => $courses
+        ]);
     }
 }

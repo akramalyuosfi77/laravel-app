@@ -45,6 +45,7 @@ use App\Livewire\Student\MyCoursesPage;
 use App\Livewire\Student\MySchedulePage as StudentMySchedulePage;
 use App\Livewire\Student\MyAttendancePage;
 use App\Livewire\Student\ProfilePage;
+use App\Livewire\Student\AiChatPage;
 
 
 /*
@@ -110,6 +111,7 @@ Route::middleware(['auth', 'role:student', 'verified', 'throttle:20,1'])->prefix
     Route::get('my-schedule', StudentMySchedulePage::class)->name('my-schedule');
     Route::get('/my-attendance', MyAttendancePage::class)->name('attendance');
     Route::get('/profile', ProfilePage::class)->name('profile');
+    Route::get('/ai-chat', AiChatPage::class)->name('ai-chat');
 });
 
 

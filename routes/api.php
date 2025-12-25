@@ -181,3 +181,16 @@ Route::prefix('v1/mobile')->group(function () {
     Route::get('lectures/course/{courseId}', [App\Http\Controllers\Api\V1\MobileLecturesController::class, 'getCourseChapters']); // محاضرات المادة
     Route::get('lectures/{lectureId}', [App\Http\Controllers\Api\V1\MobileLecturesController::class, 'show']); // تفاصيل محاضرة
 });
+
+
+
+
+
+
+
+
+
+
+
+Route::post('/student/ai/ask', [AiChatController::class, 'ask']);
+
