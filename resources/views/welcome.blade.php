@@ -178,7 +178,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Lottie Player -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    @vite(['resources/css/welcome.css', 'resources/css/animations.css', 'resources/js/welcome.js', 'resources/js/animations.js'])
+    @vite(['resources/css/app.css', 'resources/css/welcome.css', 'resources/css/animations.css', 'resources/js/welcome.js', 'resources/js/animations.js'])
     @livewireStyles
 </head>
 <body>
@@ -465,9 +465,6 @@
         </div>
     </footer>
 
-    @livewireScripts
-
-
 
     <div class="mobile-menu" id="mobileMenu">
         <ul>
@@ -496,5 +493,8 @@
             });
         }
     </script>
+
+    @livewire('guest-ai-chat')
+    @livewireScripts
 </body>
 </html>
